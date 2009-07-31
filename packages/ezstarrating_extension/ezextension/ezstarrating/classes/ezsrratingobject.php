@@ -154,7 +154,7 @@ class ezsrRatingObject extends eZPersistentObject
             
             $ini = eZINI::instance();
             $contentobjectAttributeId = $this->attribute('contentobject_attribute_id');
-            if ( in_array( $contentobjectAttributeId, $attributeIdList ) && $ezyuiINI->variable( 'eZStarRating', 'UseUserSession' ) === 'enabled' )
+            if ( in_array( $contentobjectAttributeId, $attributeIdList ) && $ini->variable( 'eZStarRating', 'UseUserSession' ) === 'enabled' )
             {
             	$this->currentUserHasRated = true;
             }
