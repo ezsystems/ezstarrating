@@ -3,6 +3,7 @@
 * Changed from xajax to ezjscore + yui3 for ajax calls
 * Merged rating code from ezcore / ezyui
 * Code cleanup (cs & phpdoc and code name conventions)
+* Load css with YUI.Loader
 
 
 #v1.1  29 Jan 2008
