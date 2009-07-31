@@ -1,7 +1,0 @@
-+ Fetch most rated objects
-+ Set max rating in datatype (class or content?)
-+ Ability to clear ratings from datatype
-+ Stats
-+ Options for vote uniquness - currently per session onlt.  This covers both
-  Anonymous & logged in users could make it based on user_id or session so that .
-
