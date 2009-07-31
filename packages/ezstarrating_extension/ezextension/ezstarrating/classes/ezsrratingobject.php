@@ -98,7 +98,7 @@ class ezsrRatingObject extends eZPersistentObject
     /* Function Attributes Methods */
     function getNumber()
     {
-        $stats = self::stats( $this->attribute('contentobject_attribute_id') );
+        $stats = self::stats( $this->attribute('contentobject_id'), $this->attribute('contentobject_attribute_id') );
         $return = 0;
         if (isset($stats['count']))
             $return = $stats['count'];
@@ -107,7 +107,7 @@ class ezsrRatingObject extends eZPersistentObject
 
     function getAverage()
     {
-        $stats = self::stats( $this->attribute('contentobject_attribute_id') );
+        $stats = self::stats( $this->attribute('contentobject_id'), $this->attribute('contentobject_attribute_id') );
         $return = 0;
         if (isset($stats['average']))
             $return = $stats['average'];
@@ -123,7 +123,7 @@ class ezsrRatingObject extends eZPersistentObject
 
     function getSTD()
     {
-        $stats = self::stats( $this->attribute('contentobject_attribute_id') );
+        $stats = self::stats( $this->attribute('contentobject_id'), $this->attribute('contentobject_attribute_id') );
         $return = 0;
         if (isset($stats['std']))
             $return = $stats['std'];
@@ -164,11 +164,13 @@ class ezsrRatingObject extends eZPersistentObject
                 {
                     $cond = array( 'user_id' => $userId, // for table index
                                    'session_key' => $sessionKey,
+                                   'contentobject_id' => $this->attribute('contentobject_id'), // for table index
                                    'contentobject_attribute_id' => $contentobjectAttributeId );
                 }
                 else
                 {
                     $cond = array( 'user_id' => $userId,
+                                   'contentobject_id' => $this->attribute('contentobject_id'), // for table index
                                    'contentobject_attribute_id' => $contentobjectAttributeId );
                 }
                 $this->currentUserHasRated = eZPersistentObject::count( self::definition(), $cond, 'id' ) != 0;
@@ -200,7 +202,7 @@ class ezsrRatingObject extends eZPersistentObject
         eZPersistentObject::removeObject( self::definition(), $cond );
     }
 
-    static function fetch($id)
+    static function fetch( $id )
     {
         $cond = array( 'id' => $id );
         $return = eZPersistentObject::fetchObject( self::definition(), null, $cond );
@@ -249,7 +251,7 @@ class ezsrRatingObject extends eZPersistentObject
      * NOTE: you have to provide the following attributes:
      *     contentobject_id
      *     contentobject_attribute_id
-     *     rating
+     *     rating (this is only requried if you plan to store the object)
      * 
      * @param array $row
      * @return ezsrRatingObject
@@ -266,27 +268,27 @@ class ezsrRatingObject extends eZPersistentObject
         {
             $row['user_id'] = eZUser::currentUserID();
         }
+        
+        if ( !isset( $row['contentobject_id'] ) )
+        {
+            eZDebug::writeError( 'Missing \'contentobject_id\' parameter!', __METHOD__ );
+        }
+
+        if ( !isset( $row['contentobject_attribute_id'] ) )
+        {
+            eZDebug::writeError( 'Missing \'contentobject_attribute_id\' parameter!', __METHOD__ );
+        }
 
         $object = new self( $row );
         return $object;
     }
 
-    static function fetchBySessionKey( $ContentObjectAttributeID )
-    {
-        $http = eZHTTPTool::instance();
-        $session_key = $http->getSessionKey();
-        $cond = array('session_key' => $session_key,
-                      'contentobject_attribute_id' => $ContentObjectAttributeID);
-        $object = self::fetchObjectList( self::definition(), null, $cond );
-        return count($object);
-    }
-
-    static function stats( $ContentObjectAttributeID )
+    static function stats( $ContentObjectID, $ContentObjectAttributeID )
     {
         static $cachedStats = array( 0 => null );
-    	if ( isset( $cachedStats[ $ContentObjectAttributeID ] ) )
+    	if ( isset( $cachedStats[$ContentObjectID][$ContentObjectAttributeID] ) )
         {
-            $return = $cachedStats[$ContentObjectAttributeID];
+            $return = $cachedStats[$ContentObjectID][$ContentObjectAttributeID];
         }
         else
         {
@@ -296,15 +298,234 @@ class ezsrRatingObject extends eZPersistentObject
                                     'name'      => 'average' ),
                              array( 'operation' => 'std( rating )',
                                     'name'      => 'std' ));
-            $cond = array( 'contentobject_attribute_id' => $ContentObjectAttributeID );
+            $cond = array( 'contentobject_id' => $ContentObjectID, // needed for table index
+                           'contentobject_attribute_id' => $ContentObjectAttributeID );
             $return = self::fetchObjectList( self::definition(), array() ,$cond, null, null, false, false, $custom );
 
             if ( is_array( $return ) )
                 $return = $return[0];
 
-            $cachedStats[$ContentObjectAttributeID] = $return;
+            if ( isset( $cachedStats[$ContentObjectID] ) )
+            {
+                $cachedStats[$ContentObjectID] = array();
+            }
+
+            $cachedStats[$ContentObjectID][$ContentObjectAttributeID] = $return;
         }
         return $return;
+    }
+
+    static function fetchNodeByRating( $params )
+    {
+         /*
+         * Fetch top/bottom content (nodes) by rating++
+         * NOTE: Uses LEFT JOIN to also include nodes that has not been rated yet, might lead to performance issues!
+         * 
+         * Parms:
+         * sort_by (default: array(array('rating', false ),array('rating_count', false)) controlls sorting
+         *     possible sortings are rating_count, rating, object_count, view_count, published and modified 
+         *     possible direction are true (ASC) and false (DESC)
+         *     Note: 'object_count' makes only sense when combined with group_by_owner
+         * class_identifier (default: empty) limit fetch to a specific classes
+         * offset  (default: 0) set offset on returned list
+         * limit (default: 10) limit number of objects returned
+         * group_by_owner (default: false) will give you result grouped by owner instead
+         *                and the node of the owner (user object) is
+         *                fetched intead
+         * main_parent_node_id (default: none) Limit result based on parent main node id
+         * main_parent_node_path (default: none) Alternative to above param, uses path string
+         *                instead for recursive fetch, format $node.path_string: '/1/2/144/'
+         * owner_main_parent_node_id (default: none) Limit result based on parent main 
+         *                node id of owner ( main user group ) 
+         * owner_main_parent_node_path (default: none) Alternative to above param, uses path string
+         *                instead for recursive fetch, format $node.path_string: '/1/2/144/'
+         * owner_id (default: none) filters by owner object id
+         * as_object (default: true) make node objects or not (rating ) 
+         * load_data_map (default: false) preload data_map 
+         */
+
+        $ret         = array();
+        $whereSql    = array();
+        $offset      = 0;
+        $limit       = 10;
+        $fromSql     = '';
+        $asObject    = isset( $params['as_object'] ) ? $params['as_object'] : true;
+        $loadDataMap = isset( $params['load_data_map'] ) ? $params['load_data_map'] : false;
+        $selectSql   = 'ezcontentobject.*, node_tree.*,';
+        $groupBySql  = 'GROUP BY ezcontentobject.id';
+        $orderBySql  = 'ORDER BY rating DESC, rating_count DESC';// default sorting
+        
+        // WARNING: group_by_owner only works as intended if user is owner of him self..
+        if ( isset( $params['group_by_owner'] ) && $params['group_by_owner'] )
+        {
+            // group by owner instead of content object and fetch users instead of content objects
+            $selectSql  = 'ezcontentobject.*, owner_tree.*,';
+            $groupBySql = 'GROUP BY ezcontentobject.owner_id';
+        }
+        
+        if ( isset( $params['owner_main_parent_node_id'] ) and is_numeric( $params['owner_main_parent_node_id'] ) )
+        {
+            // filter by main parent node of owner (main user group)
+            $parentNodeId = $params['owner_main_parent_node_id'];
+            $whereSql[] = 'owner_tree.parent_node_id = ' . $parentNodeId;
+        }
+        else if ( isset( $params['owner_main_parent_node_path'] ) and is_string( $params['owner_main_parent_node_path'] ) )
+        {
+            // filter recursivly by main parent node id
+            // supported format is /1/2/144/256/ ( $node.path_string )
+            $parentNodePath = $params['owner_main_parent_node_path'];
+            $whereSql[] = "owner_tree.path_string != '$parentNodePath'";
+            $whereSql[] = "owner_tree.path_string like '$parentNodePath%'";
+        }
+        else if ( isset( $params['owner_id'] ) and is_numeric($params['owner_id']) )
+        {
+            // filter by owner_id ( user / contentobject id)
+            $ownerId = $params['owner_id'];
+            $whereSql[] = 'ezcontentobject.owner_id = ' . $ownerId;
+        }
+        
+        if ( isset( $params['main_parent_node_id'] ) and is_numeric( $params['main_parent_node_id'] ) )
+        {
+            // filter by main parent node id
+            $parentNodeId = $params['main_parent_node_id'];
+            $whereSql[] = 'node_tree.parent_node_id = ' . $parentNodeId;
+        }
+        else if ( isset( $params['main_parent_node_path'] ) and is_string( $params['main_parent_node_path'] ) )
+        {
+            // filter recursivly by main parent node id
+            // supported format is /1/2/144/256/ ( $node.path_string )
+            $parentNodePath = $params['main_parent_node_path'];
+            $whereSql[] = "node_tree.path_string != '$parentNodePath'";
+            $whereSql[] = "node_tree.path_string like '$parentNodePath%'";
+        }
+        
+        if ( isset( $params['class_identifier'] ) )
+        {
+            // filter by class id
+            $classID = array();
+            $classIdentifier = $params['class_identifier'];
+            if ( !is_array( $classIdentifier )) $classIdentifier = array( $classIdentifier );
+            
+            foreach ( $classIdentifier as $id )
+            {
+                $classID[] = is_string( $id ) ? eZContentObjectTreeNode::classIDByIdentifier( $id ) : $id;
+            }
+            if ( $classID )
+            {
+                $whereSql[] = 'ezcontentobject.contentclass_id in (' . implode( ',', $classID ) . ')';
+            }
+        }
+
+        if ( isset( $params['limit'] ))
+        {
+            $limit = (int) $params['limit'];
+        }
+
+        if ( isset( $params['offset'] ))
+        {
+            $offset = (int) $params['offset'];
+        }
+        
+        if ( isset( $params['sort_by'] ) && is_array( $params['sort_by'] ) )
+        {
+            $orderBySql = 'ORDER BY ';
+            $orderArr = is_string( $params['sort_by'][0] ) ? array( $params['sort_by'] ) : $params['sort_by'];
+            foreach( $orderArr as $key => $order )
+            {
+                if ( $key !== 0 ) $orderBySql .= ',';
+                $direction = isset( $order[1] ) ? $order[1] : false;
+                switch( $order[0] )
+                {
+                    case 'rating':
+                    {
+                        $orderBySql .= 'rating ' . ( $direction ? 'ASC' : 'DESC');
+                    }break;
+                    case 'rating_count':
+                    {
+                        $orderBySql .= 'rating_count ' . ( $direction ? 'ASC' : 'DESC');
+                    }break;
+                    case 'object_count':
+                    {
+                        $orderBySql .= 'object_count ' . ( $direction ? 'ASC' : 'DESC');
+                    }break;
+                    case 'published':
+                    {
+                        $orderBySql .= 'ezcontentobject.published ' . ( $direction ? 'ASC' : 'DESC');
+                    }break;
+                    case 'modified':
+                    {
+                        $orderBySql .= 'ezcontentobject.modified ' . ( $direction ? 'ASC' : 'DESC');
+                    }break;
+                    case 'view_count':
+                    {
+                        // notice: will only fetch nodes that HAVE a entry in the ezview_counter table!!!
+                        $selectSql  .= 'ezview_counter.count as view_count,';
+                        $fromSql    .= 'ezview_counter,';
+                        $whereSql[]  = 'node_tree.node_id = ezview_counter.node_id';
+                        $orderBySql .= 'view_count ' . ( $direction ? 'ASC' : 'DESC');                        
+                    }break;
+                }
+            }
+        }
+
+        $whereSql = $whereSql ? ' AND ' . implode( $whereSql, ' AND '): '';
+
+        $db  = eZDB::instance();
+        $sql = "SELECT
+                             $selectSql
+                             AVG( ezstarrating.rating  ) as rating,
+                             COUNT( ezstarrating.rating  ) as rating_count,
+                             COUNT( ezstarrating.id ) as object_count,
+                             ezcontentclass.serialized_name_list as class_serialized_name_list,
+                             ezcontentclass.identifier as class_identifier,
+                             ezcontentclass.is_container as is_container
+                            FROM
+                             ezcontentobject_tree node_tree,
+                             ezcontentobject_tree owner_tree,
+                             ezcontentclass,
+                             $fromSql
+                             ezcontentobject
+                            LEFT JOIN ezstarrating
+                             ON ezstarrating.contentobject_id = ezcontentobject.id
+                            WHERE
+                             ezcontentobject.id = node_tree.contentobject_id AND
+                             node_tree.node_id = node_tree.main_node_id AND
+                             ezcontentobject.owner_id = owner_tree.contentobject_id AND
+                             owner_tree.node_id = owner_tree.main_node_id AND
+                             ezcontentclass.version=0 AND
+                             ezcontentclass.id = ezcontentobject.contentclass_id
+                             $whereSql
+                            $groupBySql
+                            $orderBySql";
+
+        $ret = $db->arrayQuery( $sql, array( 'offset' => $offset, 'limit' => $limit ) );
+        unset($db);
+
+        if ( isset( $ret[0] ) && is_array( $ret ) )
+        {
+            if ( $asObject )
+            {
+                $ret = eZContentObjectTreeNode::makeObjectsArray( $ret );
+                if ( $loadDataMap )
+                    eZContentObject::fillNodeListAttributes( $ret );
+            }
+            else
+            {
+                //$ret = $ret;
+            }
+            
+        }
+        else if ( $ret === false )
+        {
+            eZDebug::writeError( 'The ezstarrating table seems to be missing,
+                          contact your administrator', __METHOD__ );
+            $ret = array();
+        }
+        else
+        {
+            $ret = array();
+        }
+        return $ret;
     }
 }
 

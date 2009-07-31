@@ -8,5 +8,5 @@ CREATE TABLE IF NOT EXISTS `ezstarrating` (
   `contentobject_attribute_id` int(11) NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `user_id_session_key` ( `user_id`,`session_key` ),
-  KEY `contentobject_attribute_id` ( `contentobject_attribute_id` )
+  KEY `contentobject_id_contentobject_attribute_id` ( `contentobject_id`, `contentobject_attribute_id` )
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;

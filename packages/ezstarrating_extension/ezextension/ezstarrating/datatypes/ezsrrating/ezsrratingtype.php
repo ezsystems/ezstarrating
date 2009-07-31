@@ -112,7 +112,8 @@ class ezsrRatingType extends eZDataType
     */
     function objectAttributeContent( $objectAttribute )
     {
-        $object = ezsrRatingObject::create( array('contentobject_attribute_id' => $objectAttribute->attribute('id') ) );
+        $object = ezsrRatingObject::create( array('contentobject_id' => $objectAttribute->attribute('contentobject_id'),
+                                                  'contentobject_attribute_id' => $objectAttribute->attribute('id') ) );
         return $object;
     }
 }
