@@ -30,7 +30,7 @@ class eZStarRatingInfo
         return array(
             'Name' => "eZ Star Rating",
             'Version' => "2.0",
-            'Author' => "<a href='http://www.stuffandcontent.com'>Bruce Morrison</a>",
+            'Author' => "<a href='http://www.stuffandcontent.com'>Bruce Morrison</a> & André R.",
             'Copyright' => "Copyright (C) 2008 Bruce Morrison, 2009 eZ Systems AS",
             'License' => "GNU General Public License v2.0",
         );
