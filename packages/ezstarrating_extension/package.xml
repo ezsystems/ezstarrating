@@ -3,8 +3,8 @@
   <name>ezstarrating_extension</name>
   <summary>ezstarrating extension</summary>
   <description>This package contains the ezstarrating eZ Publish extension</description>
-  <type value="extension"/>
   <vendor>eZ systems</vendor>
+  <type value="extension"/>
   <ezpublish>
     <version>4.2.0</version>
     <named-version>4.2</named-version>
