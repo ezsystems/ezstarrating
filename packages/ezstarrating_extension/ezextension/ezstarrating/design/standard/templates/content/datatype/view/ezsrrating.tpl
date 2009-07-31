@@ -16,7 +16,13 @@ Rating: <strong><span id="average_{$attribute.id}">{$rating.rounded_average|wash
 {ezscript('ezjsc::yui3')}
 <script type="text/javascript">
 {literal}
-YUI( YUI3_config ).use('node', 'event', 'io-ez', function( Y )
+var ezsrYUI3_config = YUI3_config;
+ezsrYUI3_config.modules = {'ezsr-star-rating-css' : {
+    type: 'css',
+    fullpath: {/literal}{"stylesheets/star_rating.css"|ezdesign()}{literal}
+}};
+
+YUI( ezsrYUI3_config ).use('node', 'event', 'io-ez', 'ezsr-star-rating-css', function( Y )
 {
     Y.on( "domready", function( e )
     {
