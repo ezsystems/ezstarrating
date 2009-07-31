@@ -3,8 +3,8 @@
 [ExtensionSettings]
 DesignExtensions[]=ezstarrating
 
-#[StylesheetSettings]
-#CSSFileList[]=star_rating.css
+[StylesheetSettings]
+CSSFileList[]=star_rating.css
 
 */ ?>
 
