@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension name="ezstarrating">
+  <file name="CHANGELOG" md5sum="7c5d597272951055f33fb835aa95ff62"/>
+  <file name="classes" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="starrating.php" path="/classes" md5sum="032f3fe9cb653dac58f1b2f6c25332b7"/>
+  <file name="datatypes" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="starrating" path="/datatypes" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="starratingtype.php" path="/datatypes/starrating" md5sum="759c2347d04f119db71b7b663caf74f4"/>
+  <file name="design" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="standard" path="/design" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="images" path="/design/standard" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="silk" path="/design/standard/images" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="blankstar.png" path="/design/standard/images/silk" md5sum="2f9281cee25640e07f594b0a869a743e"/>
+  <file name="halfstar.png" path="/design/standard/images/silk" md5sum="006fcab1b9a97b4a7815cd975d2878f0"/>
+  <file name="star.png" path="/design/standard/images/silk" md5sum="fbfc58b3b177fc211e755d0944bfa2e7"/>
+  <file name="star.gif" path="/design/standard/images" md5sum="8133f85857fcd21ee94e1c6568b6aa58"/>
+  <file name="javascript" path="/design/standard" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="yui" path="/design/standard/javascript" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="build" path="/design/standard/javascript/yui" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="yahoo-dom-event" path="/design/standard/javascript/yui/build" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="README" path="/design/standard/javascript/yui/build/yahoo-dom-event" md5sum="67b047eded8788529b8902b8980f8e36"/>
+  <file name="yahoo-dom-event.js" path="/design/standard/javascript/yui/build/yahoo-dom-event" md5sum="a67211454e486afaaf6132ac1db6f9e1"/>
+  <file name="stylesheets" path="/design/standard" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="star.gif" path="/design/standard/stylesheets" md5sum="8133f85857fcd21ee94e1c6568b6aa58"/>
+  <file name="star_rating.css" path="/design/standard/stylesheets" md5sum="bd4741bab9ddb48e8152f4f02c85e99d"/>
+  <file name="templates" path="/design/standard" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="class" path="/design/standard/templates" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="datatype" path="/design/standard/templates/class" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="edit" path="/design/standard/templates/class/datatype" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="starrating.tpl" path="/design/standard/templates/class/datatype/edit" md5sum="d41d8cd98f00b204e9800998ecf8427e"/>
+  <file name="view" path="/design/standard/templates/class/datatype" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="starrating.tpl" path="/design/standard/templates/class/datatype/view" md5sum="d41d8cd98f00b204e9800998ecf8427e"/>
+  <file name="content" path="/design/standard/templates" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="datatype" path="/design/standard/templates/content" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="edit" path="/design/standard/templates/content/datatype" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="starrating.tpl" path="/design/standard/templates/content/datatype/edit" md5sum="d41d8cd98f00b204e9800998ecf8427e"/>
+  <file name="view" path="/design/standard/templates/content/datatype" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="starrating.tpl" path="/design/standard/templates/content/datatype/view" md5sum="747a7a6e382ad54f07d10485e82132a3"/>
+  <file name="ezinfo.php" md5sum="7c58dcda985cae8b9a75dbb1a45ae669"/>
+  <file name="LICENSE" md5sum="eb723b61539feef013de476e68b5c50a"/>
+  <file name="modules" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="starrating" path="/modules" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="collect.php" path="/modules/starrating" md5sum="362a196ae782c0d9f77461eed0e53219"/>
+  <file name="module.php" path="/modules/starrating" md5sum="87044351213fccdd59d46b334b2a5797"/>
+  <file name="README" md5sum="9ad7c916a655b5be9eda7ae93218f8ee"/>
+  <file name="settings" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="content.ini.append.php" path="/settings" md5sum="05a820920d22a8f5a7d60aef2be341e5"/>
+  <file name="design.ini.append.php" path="/settings" md5sum="717daf09ed2fb217cf14e8cf201e02d4"/>
+  <file name="menu.ini.append.php" path="/settings" md5sum="45dbba0504fe9e7daa5035fc6c56aab4"/>
+  <file name="module.ini.append.php" path="/settings" md5sum="f2a238381d790f81da89dd20d3ca3eed"/>
+  <file name="site.ini.append.php" path="/settings" md5sum="343456ec069b8c4d19da865b4147d3f6"/>
+  <file name="xajax.ini.append.php" path="/settings" md5sum="3aaf307d056d89982f964d532c2fff06"/>
+  <file name="sql" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="starrating.sql" path="/sql" md5sum="f7612508d4cbb7caabd96bddaf056f04"/>
+  <file name="TODO" md5sum="8b1f6dade8066bc48e54466a03b47566"/>
+  <file name="xajax" md5sum="d41d8cd98f00b204e9800998ecf8427e" type="dir"/>
+  <file name="starrating.php" path="/xajax" md5sum="b077223d753b1c0de28997456a95ccad"/>
+</extension>

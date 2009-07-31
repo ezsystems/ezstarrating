@@ -1,0 +1,6 @@
+# v1.0 4 Jan 2008
+Initial version
+
+#v1.1 29 Jan 2008
++ added ability to have different keys per domain
++ added ability to set permissions to bypass captcha
