@@ -229,7 +229,8 @@ class ezsrRatingObject extends eZPersistentObject
              $rate <= 5 && $rate >= 1 )
         {
             $contentobjectAttribute = eZContentObjectAttribute::fetch( $contentobjectAttributeId, $version );
-            if ( $contentobjectAttribute instanceof eZContentObjectAttribute  )
+            if ( $contentobjectAttribute instanceof eZContentObjectAttribute
+              && $contentobjectAttribute->attribute('data_type_string') === ezsrRatingType::DATA_TYPE_STRING  )
             {
                 $contentobjectId = $contentobjectAttribute->attribute('contentobject_id');
                 $row = array ('contentobject_attribute_id' => $contentobjectAttributeId,

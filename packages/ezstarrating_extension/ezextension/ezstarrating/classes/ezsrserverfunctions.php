@@ -51,7 +51,10 @@ class ezsrServerFunctions extends ezjscServerFunctions
 
         $contentobjectAttribute = eZContentObjectAttribute::fetch( $ret['id'], $args[1] );
         if ( !$contentobjectAttribute instanceof eZContentObjectAttribute )
-            return null;
+            return $ret;
+
+        if ( $contentobjectAttribute->attribute('data_type_string') !== ezsrRatingType::DATA_TYPE_STRING )
+            return $ret;
 
         $rateObj = ezsrRatingObject::create( array( 'contentobject_id' => $contentobjectAttribute->attribute('contentobject_id'),
                                                     'contentobject_attribute_id' =>  $ret['id'],
