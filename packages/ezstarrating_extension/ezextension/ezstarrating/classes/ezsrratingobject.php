@@ -213,6 +213,7 @@ class ezsrRatingObject extends eZPersistentObject
 
     /**
      * Create a ezsrRatingObject and store it.
+     * Note: Access check against content object is not done in this function, make sure you check at least can_read on object first!
      * 
      * @param int $contentobjectAttributeId
      * @param int $version
