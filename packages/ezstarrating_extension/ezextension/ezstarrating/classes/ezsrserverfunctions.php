@@ -71,7 +71,7 @@ class ezsrServerFunctions extends ezjscServerFunctions
         else
         {
         	$rateObj->store();
-        	eZContentCacheManager::clearContentCacheIfNeeded( $rateObj->attribute('contentobject_id'), true, false );
+        	eZContentCacheManager::clearContentCacheIfNeeded( $rateObj->attribute('contentobject_id') );
         	$ret['rated'] = true;
         	$ret['stats'] = array(
         	   'number' => $rateObj->attribute('number'),
