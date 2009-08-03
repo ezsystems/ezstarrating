@@ -2,7 +2,7 @@
 
 [ezjscServer]
 FunctionList[]=ezstarrating_rate
-#FunctionList[]=ezstarrating_view
+FunctionList[]=ezstarrating_user_has_rated
 
 [ezjscServer_ezstarrating]
 # Url to test this server function(rate):

@@ -37,12 +37,12 @@ class ezsrServerFunctions extends ezjscServerFunctions
     /**
      * Rate content object attribute id
      *
-     * @param array $args ( 0 => contentobjectattribute_id, 1 => rating )
-     * @return bool
+     * @param array $args ( 0 => contentobjectattribute_id,  1 => contentobject_version, 2 => rating )
+     * @return array
      */
     public static function rate( $args )
     {
-        $ret = array( 'id' => 0, 'rated' => false, 'already_rated' => false );
+        $ret = array( 'id' => 0, 'rated' => false, 'already_rated' => false, 'stats' => false );
         if ( isset( $args[0] ) )
             $ret['id'] = $args[0];
             
@@ -71,26 +71,35 @@ class ezsrServerFunctions extends ezjscServerFunctions
         else
         {
         	$rateObj->store();
-        	$ret['rated'] = true;
         	eZContentCacheManager::clearContentCacheIfNeeded( $rateObj->attribute('contentobject_id'), true, false );
+        	$ret['rated'] = true;
+        	$ret['stats'] = array(
+        	   'number' => $rateObj->attribute('number'),
+        	   'average' => $rateObj->attribute('average'),
+        	   'rounded_average' => $rateObj->attribute('rounded_average'),
+        	   'std_deviation' => $rateObj->attribute('std_deviation'),
+        	);
         }
-
         return $ret;
     }
 
     /**
-     * Rate content object attribute id
+     * Check if user has rated.
      *
-     * @param array $args ( 0 => contentobjectattribute_id )
-     * @return false|array
-     *
-    public static function view( $args )
+     * @param array $args ( 0 => contentobject_id,  1 => contentobjectattribute_id )
+     * @return bool|null (null if params are wrong)
+     */
+    public static function user_has_rated( $args )
     {
-        if ( !isset( $args[0] ) || !$args[0] )
-            return false;
+        if ( !isset( $args[2] ) || !is_numeric( $args[0] ) || !is_numeric( $args[1] ) )
+            return null;
 
-        return array( 'count' => 44, 'rating' => 3.5 );
-    }/*
+        $rateObj = ezsrRatingObject::create( array( 'contentobject_id' => $args[0],
+                                                    'contentobject_attribute_id' =>  $args[1]
+        ));
+
+        return $rateObj->userHasRated();
+    }
 
     /**
      * Reimp

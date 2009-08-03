@@ -1,3 +1,11 @@
+.ezsr-star-rating li a
+{
+    cursor: default;
+}
+.ezsr-star-rating-enabled li a
+{
+    cursor: pointer;
+}
 .ezsr-star-rating,
 .ezsr-star-rating a:hover,
 .ezsr-star-rating a:active,
@@ -36,9 +44,9 @@
 	overflow: hidden;
 	border: none;
 }
-.ezsr-star-rating a:hover,
-.ezsr-star-rating a:active,
-.ezsr-star-rating a:focus
+.ezsr-star-rating-enabled a:hover,
+.ezsr-star-rating-enabled a:active,
+.ezsr-star-rating-enabled a:focus
 {
 	background-position: left bottom;
 }
@@ -71,5 +79,4 @@
 {
 	z-index: 1;
 	background-position: left center;
-}	
-
+}

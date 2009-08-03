@@ -100,7 +100,7 @@ class ezsrRatingObject extends eZPersistentObject
     {
         $stats = self::stats( $this->attribute('contentobject_id'), $this->attribute('contentobject_attribute_id') );
         $return = 0;
-        if (isset($stats['count']))
+        if ( isset( $stats['count'] ) )
             $return = $stats['count'];
         return $return;
     }
@@ -109,14 +109,14 @@ class ezsrRatingObject extends eZPersistentObject
     {
         $stats = self::stats( $this->attribute('contentobject_id'), $this->attribute('contentobject_attribute_id') );
         $return = 0;
-        if (isset($stats['average']))
+        if ( isset( $stats['average'] ) )
             $return = $stats['average'];
         return $return;
     }
 
     function getRoundedAverage()
     {
-        $avg = $this->attribute('average');
+        $avg = $this->getAverage();
         $rnd_avg = intval($avg * 2 + 0.5) / 2;
         return $rnd_avg;
     }
@@ -125,7 +125,7 @@ class ezsrRatingObject extends eZPersistentObject
     {
         $stats = self::stats( $this->attribute('contentobject_id'), $this->attribute('contentobject_attribute_id') );
         $return = 0;
-        if (isset($stats['std']))
+        if ( isset( $stats['std'] ) )
             $return = $stats['std'];
         return $return;
     }
@@ -181,6 +181,12 @@ class ezsrRatingObject extends eZPersistentObject
         return $this->currentUserHasRated;
     }
 
+    /**
+     * Override store function to add some custom logic for setting create time and 
+     * store contentobject_attribute_id in session to avoid several ratings from same user.
+     * 
+     * @param array $fieldFilters
+     */
     function store( $fieldFilters = null )
     {
         $this->setAttribute( 'created_at', time() );
@@ -198,12 +204,23 @@ class ezsrRatingObject extends eZPersistentObject
         eZPersistentObject::store( $fieldFilters );
     }
 
+    /**
+     * Remove ratings by content object attribute id.
+     * 
+     * @param int $contentobjectAttributeId
+     */
     static function removeAll( $contentobjectAttributeId )
     {
         $cond = array( 'contentobject_attribute_id' => $contentobjectAttributeId );
         eZPersistentObject::removeObject( self::definition(), $cond );
     }
 
+    /**
+     * Fetch rating by rating id!
+     * 
+     * @param int $id
+     * @return null|ezsrRatingObject
+     */
     static function fetch( $id )
     {
         $cond = array( 'id' => $id );
@@ -287,6 +304,13 @@ class ezsrRatingObject extends eZPersistentObject
         return $object;
     }
 
+    /**
+     * Fetch and cache rating stats pr attribute id.
+     * 
+     * @param int $ContentObjectID
+     * @param int $ContentObjectAttributeID
+     * @return array (with count, average and std values)
+     */
     static function stats( $ContentObjectID, $ContentObjectAttributeID )
     {
         static $cachedStats = array( 0 => null );
@@ -306,10 +330,12 @@ class ezsrRatingObject extends eZPersistentObject
                            'contentobject_attribute_id' => $ContentObjectAttributeID );
             $return = self::fetchObjectList( self::definition(), array() ,$cond, null, null, false, false, $custom );
 
-            if ( is_array( $return ) )
+            if ( isset( $return[0]['std'] ) )
+            {
                 $return = $return[0];
+            }
 
-            if ( isset( $cachedStats[$ContentObjectID] ) )
+            if ( !isset( $cachedStats[$ContentObjectID] ) )
             {
                 $cachedStats[$ContentObjectID] = array();
             }
@@ -319,13 +345,17 @@ class ezsrRatingObject extends eZPersistentObject
         return $return;
     }
 
+    /**
+     * Fetch top/bottom content (nodes) by rating++
+     * NOTE: Uses LEFT JOIN to also include nodes that has not been rated yet, might lead to performance issues!
+     * 
+     * @param array $params (see inline doc for details)
+     * @return array Returs array of nodes (either objects or raw db output based on as_object param)
+     */
     static function fetchNodeByRating( $params )
     {
-         /*
-         * Fetch top/bottom content (nodes) by rating++
-         * NOTE: Uses LEFT JOIN to also include nodes that has not been rated yet, might lead to performance issues!
-         * 
-         * Parms:
+        /**
+         * Param values ($params):
          * sort_by (default: array(array('rating', false ),array('rating_count', false)) controlls sorting
          *     possible sortings are rating_count, rating, object_count, view_count, published and modified 
          *     possible direction are true (ASC) and false (DESC)
