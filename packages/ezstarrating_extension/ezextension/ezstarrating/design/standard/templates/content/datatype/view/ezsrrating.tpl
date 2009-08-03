@@ -8,16 +8,15 @@
 </ul>
 
 Rating: <strong><span id="ezsr_average_{$attribute.id}">{$rating.rounded_average|wash}</span></strong>/5 (<span id="ezsr_total_{$attribute.id}">{$rating.number|wash}</span> votes cast)
-<p id="ezsr_just_rated_{$attribute.id}" class="ezsr_just_rated" style="display: none;">Thank you for your rating!</p>
-<p id="ezsr_has_rated_{$attribute.id}" class="ezsr_has_rated" style="display: none;">You have already rated this page, you can only it rate once!</p>
+<p id="ezsr_just_rated_{$attribute.id}" class="ezsr_just_rated hide">Thank you for your rating!</p>
+<p id="ezsr_has_rated_{$attribute.id}" class="ezsr_has_rated hide">You have already rated this page, you can only rate it once!</p>
 
 {run-once}
 {if fetch( 'user', 'has_access_to', hash( 'module', 'ezjscore', 'function', 'call_ezstarrating_rate' ))}
 {ezscript('ezjsc::yui3')}
 <script type="text/javascript">
 {literal}
-if ( YUI3_config.modules === undefined )
-	YUI3_config.modules = {};
+if ( YUI3_config.modules === undefined ) YUI3_config.modules = {};
 
 YUI3_config.modules['ezsr-star-rating-css'] = {
     type: 'css',
@@ -49,18 +48,19 @@ YUI( YUI3_config ).use('node', 'event', 'io-ez', 'ezsr-star-rating-css', functio
             var data = o.responseJSON.content;
             if ( data.rated  )
             {
-            	Y.all('#ezsr_just_rated_' + data.id).setStyle('display', '');
+            	Y.all('#ezsr_just_rated_' + data.id).removeClass('hide');
             	Y.all('#ezsr_rating_percent_' + data.id).setStyle('width', (( data.stats.rounded_average / 5 ) * 100 ) + '%' );
             	Y.all('#ezsr_average_' + data.id).setContent( data.stats.rounded_average );
                 Y.all('#ezsr_total_' + data.id).setContent( data.stats.number );
             }
             else if ( data.already_rated  )
-                Y.all('#ezsr_has_rated_' + data.id).setStyle('display', '');
+                Y.all('#ezsr_has_rated_' + data.id).removeClass('hide');
             //else alert('Invalid input variables, could not rate!');
         }
         else
         {
-            // TODO: this shouldn't happen as we have allready checked access..
+            // This shouldn't happen as we have already checked access in the template..
+            // Unless this is inside a aggressive cache-block of course.
             alert( o.responseJSON.error_text );
         }
     }
