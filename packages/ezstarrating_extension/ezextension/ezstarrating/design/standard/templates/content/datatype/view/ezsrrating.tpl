@@ -12,9 +12,6 @@
 <p id="ezsr_just_rated_{$attribute.id}" class="ezsr-just-rated hide">{'Thank you for rating!'|i18n('design/ezstarrating/datatypes', 'When rating')}</p>
 <p id="ezsr_has_rated_{$attribute.id}" class="ezsr-has-rated hide">{'You have already rated this page, you can only rate it once!'|i18n('design/ezstarrating/datatypes', 'When rating')}</p>
 
-
-
-
 {run-once}
 {if fetch( 'user', 'has_access_to', hash( 'module', 'ezjscore', 'function', 'call_ezstarrating_rate' ))}
 {ezscript('ezjsc::yui3')}
@@ -46,7 +43,6 @@ YUI( YUI3_config ).use('node', 'event', 'io-ez', 'ezsr-star-rating-css', functio
 
     function _callBack( id, o )
     {
-
         if ( o.responseJSON && o.responseJSON.content !== '' )
         {
             var data = o.responseJSON.content;
@@ -73,4 +69,3 @@ YUI( YUI3_config ).use('node', 'event', 'io-ez', 'ezsr-star-rating-css', functio
 </script>
 {/if}
 {/run-once}
-
