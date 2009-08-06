@@ -80,3 +80,7 @@
 	z-index: 1;
 	background-position: left center;
 }
+span.ezsr_average_rating
+{
+	font-weight: bold;
+}
