@@ -1,14 +1,14 @@
 {def $rating = $attribute.content}
 
 <ul id="ezsr_rating_{$attribute.id}" class="ezsr-star-rating">
-   <li id="ezsr_rating_percent_{$attribute.id}" class="ezsr-current-rating" style="width:{$rating.rounded_average|div(5)|mul(100)}%;">{'Currently %current_rating og 5 Stars.'|i18n('design/standard/ezoe', '', hash( '%current_rating', concat('<span>', $rating.rounded_average|wash, '</span>') ))}</li>
+   <li id="ezsr_rating_percent_{$attribute.id}" class="ezsr-current-rating" style="width:{$rating.rounded_average|div(5)|mul(100)}%;">{'Currently %current_rating og 5 Stars.'|i18n('design/ezstarrating/datatypes', '', hash( '%current_rating', concat('<span>', $rating.rounded_average|wash, '</span>') ))}</li>
    {for 1 to 5 as $num}
-       <li><a href="JavaScript:void(0);" id="ezsr_{$attribute.id}_{$attribute.version}_{$num}" title="{'Rate %rating stars out of 5'|i18n('design/standard/ezoe', '', hash( '%rating', $num ))}" class="ezsr-stars-{$num}" rel="nofollow" onfocus="this.blur();">{$num}</a></li>
+       <li><a href="JavaScript:void(0);" id="ezsr_{$attribute.id}_{$attribute.version}_{$num}" title="{'Rate %rating stars out of 5'|i18n('design/ezstarrating/datatypes', '', hash( '%rating', $num ))}" class="ezsr-stars-{$num}" rel="nofollow" onfocus="this.blur();">{$num}</a></li>
    {/for}
 </ul>
 
-{'Rating: %current_rating/5'|i18n('design/standard/ezoe', '', hash( '%current_rating', concat('<span id="ezsr_average_', $attribute.id, '" class="ezsr-average-rating">', $rating.rounded_average|wash, '</span>') ))}
-({'%rating_count votes casted'|i18n('design/standard/ezoe', '', hash( '%rating_count', concat('<span id="ezsr_total_', $attribute.id, '">', $rating.number|wash, '</span>') ))}) 
+{'Rating: %current_rating/5'|i18n('design/ezstarrating/datatypes', '', hash( '%current_rating', concat('<span id="ezsr_average_', $attribute.id, '" class="ezsr-average-rating">', $rating.rounded_average|wash, '</span>') ))}
+({'%rating_count votes casted'|i18n('design/ezstarrating/datatypes', '', hash( '%rating_count', concat('<span id="ezsr_total_', $attribute.id, '">', $rating.number|wash, '</span>') ))}) 
 <p id="ezsr_just_rated_{$attribute.id}" class="ezsr-just-rated hide">{'Thank you for rating!'|i18n('design/ezstarrating/datatypes', 'When rating')}</p>
 <p id="ezsr_has_rated_{$attribute.id}" class="ezsr-has-rated hide">{'You have already rated this page, you can only rate it once!'|i18n('design/ezstarrating/datatypes', 'When rating')}</p>
 
