@@ -1,0 +1,51 @@
+Index: kernel/classes/ezcontentobjecttreenode.php
+===================================================================
+--- kernel/classes/ezcontentobjecttreenode.php	(revision 23847)
++++ kernel/classes/ezcontentobjecttreenode.php	(working copy)
+@@ -792,7 +792,8 @@
+     {
+         $filter = array( 'tables'   => '',
+                          'joins'    => '',
+-                         'columns'  => '' );
++                         'columns'  => '',
++                         'group_by' => '' );
+ 
+         if ( $extendedAttributeFilter and count( $extendedAttributeFilter ) > 1 )
+         {
+@@ -838,6 +839,9 @@
+             $filter['tables']   = $sqlResult['tables'];
+             $filter['joins']    = $sqlResult['joins'];
+             $filter['columns']  = $sqlResult['columns'];
++            
++            if( isset( $sqlResult['group_by'] ) )
++                $filter['group_by'] =  $sqlResult['group_by'];
+         }
+ 
+         return $filter;
+@@ -1866,7 +1870,7 @@
+         }
+ 
+         $groupBySelectText  = '';
+-        $groupByText        = '';
++        $groupByText        = $extendedAttributeFilter['group_by'];
+         eZContentObjectTreeNode::createGroupBySQLStrings( $groupBySelectText, $groupByText, $groupBy );
+ 
+         $useVersionName     = true;
+@@ -2128,7 +2132,7 @@
+         }
+ 
+         $groupBySelectText  = '';
+-        $groupByText        = '';
++        $groupByText        = $extendedAttributeFilter['group_by'];
+         eZContentObjectTreeNode::createGroupBySQLStrings( $groupBySelectText, $groupByText, $groupBy );
+ 
+         $query = "SELECT DISTINCT
+@@ -2435,7 +2439,7 @@
+         eZContentObjectTreeNode::createPathConditionAndNotEqParentSQLStrings( $pathStringCond, $notEqParentString, $nodeID, $depth, $depthOperator );
+ 
+         $groupBySelectText  = '';
+-        $groupByText        = '';
++        $groupByText        = $extendedAttributeFilter['group_by'];
+         eZContentObjectTreeNode::createGroupBySQLStrings( $groupBySelectText, $groupByText, $groupBy );
+ 
+         $useVersionName     = true;
