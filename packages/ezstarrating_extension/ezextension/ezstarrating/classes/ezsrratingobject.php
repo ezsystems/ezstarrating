@@ -347,7 +347,6 @@ class ezsrRatingObject extends eZPersistentObject
 
     /**
      * Fetch top/bottom content (nodes) by rating++
-     * NOTE: Uses LEFT JOIN to also include nodes that has not been rated yet, might lead to performance issues!
      * 
      * @param array $params (see inline doc for details)
      * @return array Returs array of nodes (either objects or raw db output based on as_object param)
