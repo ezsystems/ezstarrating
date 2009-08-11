@@ -355,38 +355,31 @@ class ezsrRatingObject extends eZPersistentObject
     static function fetchNodeByRating( $params )
     {
         /**
-         * Param values ($params):
-         * sort_by (default: array(array('rating', false ),array('rating_count', false)) controlls sorting
-         *     possible sortings are rating_count, rating, object_count, view_count, published and modified 
-         *     possible direction are true (ASC) and false (DESC)
-         *     Note: 'object_count' makes only sense when combined with group_by_owner
-         * class_identifier (default: empty) limit fetch to a specific classes
-         * offset  (default: 0) set offset on returned list
-         * limit (default: 10) limit number of objects returned
-         * group_by_owner (default: false) will give you result grouped by owner instead
-         *                and the node of the owner (user object) is
-         *                fetched intead
-         * main_parent_node_id (default: none) Limit result based on parent main node id
-         * main_parent_node_path (default: none) Alternative to above param, uses path string
-         *                instead for recursive fetch, format $node.path_string: '/1/2/144/'
-         * owner_main_parent_node_id (default: none) Limit result based on parent main 
-         *                node id of owner ( main user group ) 
-         * owner_main_parent_node_path (default: none) Alternative to above param, uses path string
-         *                instead for recursive fetch, format $node.path_string: '/1/2/144/'
-         * owner_id (default: none) filters by owner object id
-         * as_object (default: true) make node objects or not (rating ) 
-         * load_data_map (default: false) preload data_map 
+         * Works like fetch list/tree, execept:
+         * 1. Attribute filter and extended attribute filter are not supported.
+         * 2. Supported sorting: rating, rating_count, object_count, published, modified and view_count.
+         * 3. parent_node_id only works for list fetch, if you want tree fetch use 
+         *    parent_node_path (format is like $node.path_string, as in '/1/2/144/256/').
+         * 4. depth and depth_operator are not supported (so parent_node_path gives you unlimited depth).
+         * 5. There are additional advance params to see rating, rating_count, object_count pr user / group
+         *    see group_by_owner, owner_parent_node_id, owner_parent_node_path and owner_id.
+         * 6. param 'include_not_rated' when set to true will use left join so also unrated content are returned
          */
 
         $ret         = array();
         $whereSql    = array();
-        $offset      = 0;
-        $limit       = 10;
+        $offset      = false;
+        $limit       = false;
         $fromSql     = '';
-        $asObject    = isset( $params['as_object'] ) ? $params['as_object'] : true;
-        $loadDataMap = isset( $params['load_data_map'] ) ? $params['load_data_map'] : false;
-        $selectSql   = 'ezcontentobject.*, node_tree.*,';
-        $groupBySql  = 'GROUP BY ezcontentobject.id';
+        $asObject         = isset( $params['as_object'] )          ? $params['as_object']          : true;
+        $loadDataMap      = isset( $params['load_data_map'] )      ? $params['load_data_map']      : false;
+        $mainNodeOnly     = isset( $params['main_node_only'] )     ? $params['main_node_only']     : false;
+        $ignoreVisibility = isset( $params['ignore_visibility'] )  ? $params['ignore_visibility']  : false;
+        $classFilterType  = isset( $params['class_filter_type'] )  ? $params['class_filter_type']  : false;
+        $classFilterArray = isset( $params['class_filter_array'] ) ? $params['class_filter_array'] : false;
+        $includeNotRated  = isset( $params['include_not_rated'] )  ? $params['include_not_rated']  : false;
+        $selectSql   = 'ezcontentobject.*, ezcontentobject_tree.*,';
+        $groupBySql  = 'GROUP BY ezcontentobject_tree.node_id';
         $orderBySql  = 'ORDER BY rating DESC, rating_count DESC';// default sorting
         
         // WARNING: group_by_owner only works as intended if user is owner of him self..
@@ -394,20 +387,20 @@ class ezsrRatingObject extends eZPersistentObject
         {
             // group by owner instead of content object and fetch users instead of content objects
             $selectSql  = 'ezcontentobject.*, owner_tree.*,';
-            $groupBySql = 'GROUP BY ezcontentobject.owner_id';
+            $groupBySql = 'GROUP BY owner_tree.node_id';
         }
         
-        if ( isset( $params['owner_main_parent_node_id'] ) and is_numeric( $params['owner_main_parent_node_id'] ) )
+        if ( isset( $params['owner_parent_node_id'] ) and is_numeric( $params['owner_parent_node_id'] ) )
         {
-            // filter by main parent node of owner (main user group)
-            $parentNodeId = $params['owner_main_parent_node_id'];
+            // filter by parent node of owner (main user group)
+            $parentNodeId = $params['owner_parent_node_id'];
             $whereSql[] = 'owner_tree.parent_node_id = ' . $parentNodeId;
         }
-        else if ( isset( $params['owner_main_parent_node_path'] ) and is_string( $params['owner_main_parent_node_path'] ) )
+        else if ( isset( $params['owner_parent_node_path'] ) and is_string( $params['owner_parent_node_path'] ) )
         {
-            // filter recursivly by main parent node id
+            // filter recursivly by parent node id
             // supported format is /1/2/144/256/ ( $node.path_string )
-            $parentNodePath = $params['owner_main_parent_node_path'];
+            $parentNodePath = $params['owner_parent_node_path'];
             $whereSql[] = "owner_tree.path_string != '$parentNodePath'";
             $whereSql[] = "owner_tree.path_string like '$parentNodePath%'";
         }
@@ -418,46 +411,48 @@ class ezsrRatingObject extends eZPersistentObject
             $whereSql[] = 'ezcontentobject.owner_id = ' . $ownerId;
         }
         
-        if ( isset( $params['main_parent_node_id'] ) and is_numeric( $params['main_parent_node_id'] ) )
+        if ( isset( $params['parent_node_id'] ) and is_numeric( $params['parent_node_id'] ) )
         {
             // filter by main parent node id
-            $parentNodeId = $params['main_parent_node_id'];
-            $whereSql[] = 'node_tree.parent_node_id = ' . $parentNodeId;
+            $parentNodeId = $params['parent_node_id'];
+            $whereSql[] = 'ezcontentobject_tree.parent_node_id = ' . $parentNodeId;
         }
-        else if ( isset( $params['main_parent_node_path'] ) and is_string( $params['main_parent_node_path'] ) )
+        else if ( isset( $params['parent_node_path'] ) and is_string( $params['parent_node_path'] ) )
         {
             // filter recursivly by main parent node id
             // supported format is /1/2/144/256/ ( $node.path_string )
-            $parentNodePath = $params['main_parent_node_path'];
-            $whereSql[] = "node_tree.path_string != '$parentNodePath'";
-            $whereSql[] = "node_tree.path_string like '$parentNodePath%'";
+            $parentNodePath = $params['parent_node_path'];
+            $whereSql[] = "ezcontentobject_tree.path_string != '$parentNodePath'";
+            $whereSql[] = "ezcontentobject_tree.path_string like '$parentNodePath%'";
         }
-        
-        if ( isset( $params['class_identifier'] ) )
+
+        $classCondition = eZContentObjectTreeNode::createClassFilteringSQLString( $classFilterType, $classFilterArray );
+        if ( $classCondition === false )
         {
-            // filter by class id
-            $classID = array();
-            $classIdentifier = $params['class_identifier'];
-            if ( !is_array( $classIdentifier )) $classIdentifier = array( $classIdentifier );
-            
-            foreach ( $classIdentifier as $id )
-            {
-                $classID[] = is_string( $id ) ? eZContentObjectTreeNode::classIDByIdentifier( $id ) : $id;
-            }
-            if ( $classID )
-            {
-                $whereSql[] = 'ezcontentobject.contentclass_id in (' . implode( ',', $classID ) . ')';
-            }
+            eZDebug::writeNotice( "Class filter returned false", __MEHOD__ );
+            return null;
         }
 
         if ( isset( $params['limit'] ))
         {
             $limit = (int) $params['limit'];
         }
-
+        
         if ( isset( $params['offset'] ))
         {
             $offset = (int) $params['offset'];
+        }
+        
+        if ( $includeNotRated )
+        {
+        	$ratingFromSql = 'LEFT JOIN ezstarrating
+                             ON ezstarrating.contentobject_id = ezcontentobject.id';
+        	$ratingWhereSql = '';
+        }
+        else
+        {
+            $ratingFromSql = ', ezstarrating';
+            $ratingWhereSql = 'ezstarrating.contentobject_id = ezcontentobject.id AND';
         }
         
         if ( isset( $params['sort_by'] ) && is_array( $params['sort_by'] ) )
@@ -494,45 +489,75 @@ class ezsrRatingObject extends eZPersistentObject
                     {
                         // notice: will only fetch nodes that HAVE a entry in the ezview_counter table!!!
                         $selectSql  .= 'ezview_counter.count as view_count,';
-                        $fromSql    .= 'ezview_counter,';
-                        $whereSql[]  = 'node_tree.node_id = ezview_counter.node_id';
+                        $fromSql    .= ', ezview_counter';
+                        $whereSql[]  = 'ezcontentobject_tree.node_id = ezview_counter.node_id';
                         $orderBySql .= 'view_count ' . ( $direction ? 'ASC' : 'DESC');                        
                     }break;
                 }
             }
         }
 
-        $whereSql = $whereSql ? ' AND ' . implode( $whereSql, ' AND '): '';
+        $whereSql = $whereSql ? implode( $whereSql, ' AND ') . ' AND ': '';
+
+        $limitation = ( isset( $params['limitation']  ) && is_array( $params['limitation']  ) ) ? $params['limitation']: false;
+        $limitationList = eZContentObjectTreeNode::getLimitationList( $limitation );
+        $sqlPermissionChecking = eZContentObjectTreeNode::createPermissionCheckingSQL( $limitationList );
+
+        $languageFilter = ' AND ' . eZContentLanguage::languagesSQLFilter( 'ezcontentobject' );
+
+        $useVersionName     = true;
+        $versionNameTables  = eZContentObjectTreeNode::createVersionNameTablesSQLString ( $useVersionName );
+        $versionNameTargets = eZContentObjectTreeNode::createVersionNameTargetsSQLString( $useVersionName );
+        $versionNameJoins   = eZContentObjectTreeNode::createVersionNameJoinsSQLString( $useVersionName, false );
+
+        $mainNodeOnlyCond       = eZContentObjectTreeNode::createMainNodeConditionSQLString( $mainNodeOnly );
+        $showInvisibleNodesCond = eZContentObjectTreeNode::createShowInvisibleSQLString( !$ignoreVisibility );
 
         $db  = eZDB::instance();
         $sql = "SELECT
                              $selectSql
                              AVG( ezstarrating.rating  ) as rating,
                              COUNT( ezstarrating.rating  ) as rating_count,
-                             COUNT( ezstarrating.id ) as object_count,
+                             COUNT( ezcontentobject.id ) as object_count,
                              ezcontentclass.serialized_name_list as class_serialized_name_list,
                              ezcontentclass.identifier as class_identifier,
                              ezcontentclass.is_container as is_container
+                             $versionNameTargets
                             FROM
-                             ezcontentobject_tree node_tree,
+                             ezcontentobject_tree,
                              ezcontentobject_tree owner_tree,
-                             ezcontentclass,
+                             ezcontentclass
                              $fromSql
-                             ezcontentobject
-                            LEFT JOIN ezstarrating
-                             ON ezstarrating.contentobject_id = ezcontentobject.id
+                             $versionNameTables
+                             $sqlPermissionChecking[from]
+                             ,ezcontentobject
+                             $ratingFromSql
                             WHERE
-                             ezcontentobject.id = node_tree.contentobject_id AND
-                             node_tree.node_id = node_tree.main_node_id AND
+                             $ratingWhereSql
+                             ezcontentobject.id = ezcontentobject_tree.contentobject_id AND
                              ezcontentobject.owner_id = owner_tree.contentobject_id AND
                              owner_tree.node_id = owner_tree.main_node_id AND
                              ezcontentclass.version=0 AND
-                             ezcontentclass.id = ezcontentobject.contentclass_id
+                             ezcontentclass.id = ezcontentobject.contentclass_id AND
+                             $mainNodeOnlyCond
+                             $classCondition
                              $whereSql
+	                         $versionNameJoins
+	                         $showInvisibleNodesCond
+	                         $sqlPermissionChecking[where]
+	                         $languageFilter
                             $groupBySql
                             $orderBySql";
 
-        $ret = $db->arrayQuery( $sql, array( 'offset' => $offset, 'limit' => $limit ) );
+        $server = isset( $sqlPermissionChecking['temp_tables'][0] ) ? eZDBInterface::SERVER_SLAVE : false;
+
+        if ( $offset !== false || $limit !== false )
+            $ret = $db->arrayQuery( $sql, array( 'offset' => $offset, 'limit' => $limit ), $server );
+        else
+            $ret = $db->arrayQuery( $sql, null, $server );
+
+        $db->dropTempTableList( $sqlPermissionChecking['temp_tables'] );
+
         unset($db);
 
         if ( isset( $ret[0] ) && is_array( $ret ) )
@@ -542,10 +567,6 @@ class ezsrRatingObject extends eZPersistentObject
                 $ret = eZContentObjectTreeNode::makeObjectsArray( $ret );
                 if ( $loadDataMap )
                     eZContentObject::fillNodeListAttributes( $ret );
-            }
-            else
-            {
-                //$ret = $ret;
             }
             
         }
@@ -559,6 +580,7 @@ class ezsrRatingObject extends eZPersistentObject
         {
             $ret = array();
         }
+
         return $ret;
     }
 }
