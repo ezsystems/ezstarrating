@@ -49,6 +49,11 @@ class ezsrServerFunctions extends ezjscServerFunctions
         if ( !isset( $args[2] ) || !is_numeric( $args[0] ) || !is_numeric( $args[1] ) || !is_numeric( $args[2] ) || $args[2] > 5 || $args[2] < 1 )
             return $ret;
 
+        // Provide extra session protection on 4.1 (not possible on 4.0) by expecting user
+        // to have an existing session (new session = mostlikely a spammer / hacker trying to manipulate rating)
+        if ( class_exists( 'eZSession' ) && eZSession::userHasSessionCookie() !== true )
+            return $ret;
+
         $contentobjectAttribute = eZContentObjectAttribute::fetch( $ret['id'], $args[1] );
         if ( !$contentobjectAttribute instanceof eZContentObjectAttribute )
             return $ret;
