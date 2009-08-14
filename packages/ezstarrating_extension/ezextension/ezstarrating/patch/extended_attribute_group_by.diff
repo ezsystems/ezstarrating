@@ -1,6 +1,6 @@
 Index: kernel/classes/ezcontentobjecttreenode.php
 ===================================================================
---- kernel/classes/ezcontentobjecttreenode.php	(revision 23847)
+--- kernel/classes/ezcontentobjecttreenode.php	(revision 23864)
 +++ kernel/classes/ezcontentobjecttreenode.php	(working copy)
 @@ -792,7 +792,8 @@
      {
@@ -22,30 +22,85 @@ Index: kernel/classes/ezcontentobjecttreenode.php
          }
  
          return $filter;
-@@ -1866,7 +1870,7 @@
+@@ -1866,8 +1870,16 @@
          }
  
          $groupBySelectText  = '';
 -        $groupByText        = '';
-+        $groupByText        = $extendedAttributeFilter['group_by'];
-         eZContentObjectTreeNode::createGroupBySQLStrings( $groupBySelectText, $groupByText, $groupBy );
+-        eZContentObjectTreeNode::createGroupBySQLStrings( $groupBySelectText, $groupByText, $groupBy );
++        $groupBySQL         = $extendedAttributeFilter['group_by'];
++        if ( !$groupBySQL )
++        {
++            eZContentObjectTreeNode::createGroupBySQLStrings( $groupBySelectText, $groupBySQL, $groupBy );
++        }
++        else if ( $groupBy )
++        {
++            eZDebug::writeError( "Cannot use group_by parameter together with extended attribute filter which sets group_by!", __METHOD__ );
++        }
++        
  
          $useVersionName     = true;
-@@ -2128,7 +2132,7 @@
+ 
+@@ -1924,7 +1936,7 @@
+                       $sqlPermissionChecking[where]
+                       $objectNameFilterSQL
+                       $languageFilter
+-                $groupByText";
++                $groupBySQL";
+ 
+         if ( $sortingInfo['sortingFields'] )
+             $query .= " ORDER BY $sortingInfo[sortingFields]";
+@@ -2128,8 +2140,15 @@
          }
  
          $groupBySelectText  = '';
 -        $groupByText        = '';
-+        $groupByText        = $extendedAttributeFilter['group_by'];
-         eZContentObjectTreeNode::createGroupBySQLStrings( $groupBySelectText, $groupByText, $groupBy );
+-        eZContentObjectTreeNode::createGroupBySQLStrings( $groupBySelectText, $groupByText, $groupBy );
++        $groupBySQL         = $extendedAttributeFilter['group_by'];
++        if ( !$groupBySQL )
++        {
++            eZContentObjectTreeNode::createGroupBySQLStrings( $groupBySelectText, $groupBySQL, $groupBy );
++        }
++        else if ( $groupBy )
++        {
++            eZDebug::writeError( "Cannot use group_by parameter together with extended attribute filter which sets group_by!", __METHOD__ );
++        }
  
          $query = "SELECT DISTINCT
-@@ -2435,7 +2439,7 @@
+                        ezcontentobject.*,
+@@ -2151,7 +2170,7 @@
+                       $sqlPermissionChecking[from]
+                    WHERE
+                       ".substr($queryNodes, 0, -2)."
+-                $groupByText";
++                $groupBySQL";
+ 
+         if ( $sortingInfo['sortingFields'] )
+         {
+@@ -2435,8 +2454,15 @@
          eZContentObjectTreeNode::createPathConditionAndNotEqParentSQLStrings( $pathStringCond, $notEqParentString, $nodeID, $depth, $depthOperator );
  
          $groupBySelectText  = '';
 -        $groupByText        = '';
-+        $groupByText        = $extendedAttributeFilter['group_by'];
-         eZContentObjectTreeNode::createGroupBySQLStrings( $groupBySelectText, $groupByText, $groupBy );
+-        eZContentObjectTreeNode::createGroupBySQLStrings( $groupBySelectText, $groupByText, $groupBy );
++        $groupBySQL         = $extendedAttributeFilter['group_by'];
++        if ( !$groupBySQL )
++        {
++            eZContentObjectTreeNode::createGroupBySQLStrings( $groupBySelectText, $groupBySQL, $groupBy );
++        }
++        else if ( $groupBy )
++        {
++            eZDebug::writeError( "Cannot use group_by parameter together with extended attribute filter which sets group_by!", __METHOD__ );
++        }
  
          $useVersionName     = true;
+         $versionNameTables  = eZContentObjectTreeNode::createVersionNameTablesSQLString( $useVersionName );
+@@ -2473,7 +2499,7 @@
+                       $versionNameJoins
+                       $showInvisibleNodesCond
+                       $sqlPermissionChecking[where]
+-                $groupByText ";
++                $groupBySQL";
+ 
+ 
+         $db = eZDB::instance();

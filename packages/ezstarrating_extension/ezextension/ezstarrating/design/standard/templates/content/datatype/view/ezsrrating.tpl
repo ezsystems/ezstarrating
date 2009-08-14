@@ -13,7 +13,6 @@
 <p id="ezsr_has_rated_{$attribute.id}" class="ezsr-has-rated hide">{'You have already rated this page, you can only rate it once!'|i18n('extension/ezstarrating/datatype', 'When rating')}</p>
 
 {run-once}
-{if fetch( 'user', 'has_access_to', hash( 'module', 'ezjscore', 'function', 'call_ezstarrating_rate' ))}
 {ezscript('ezjsc::yui3')}
 <script type="text/javascript">
 {literal}
@@ -26,6 +25,9 @@ YUI3_config.modules['ezsr-star-rating-css'] = {
 
 YUI( YUI3_config ).use('node', 'event', 'io-ez', 'ezsr-star-rating-css', function( Y )
 {
+{/literal}
+{if fetch( 'user', 'has_access_to', hash( 'module', 'ezjscore', 'function', 'call_ezstarrating_rate' ))}
+{literal}
     Y.on( "domready", function( e )
     {
         Y.all('ul.ezsr-star-rating').addClass('ezsr-star-rating-enabled');
@@ -64,8 +66,8 @@ YUI( YUI3_config ).use('node', 'event', 'io-ez', 'ezsr-star-rating-css', functio
             alert( o.responseJSON.error_text );
         }
     }
-});
 {/literal}
-</script>
 {/if}
+{rdelim});
+</script>
 {/run-once}
