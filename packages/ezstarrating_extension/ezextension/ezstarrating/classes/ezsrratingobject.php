@@ -416,13 +416,20 @@ class ezsrRatingObject extends eZPersistentObject
             $parentNodeId = $params['parent_node_id'];
             $whereSql[] = 'ezcontentobject_tree.parent_node_id = ' . $parentNodeId;
         }
-        else if ( isset( $params['parent_node_path'] ) and is_string( $params['parent_node_path'] ) )
+        else if ( isset( $params['parent_node_path'] ) )
         {
-            // filter recursivly by main parent node id
-            // supported format is /1/2/144/256/ ( $node.path_string )
-            $parentNodePath = $params['parent_node_path'];
-            $whereSql[] = "ezcontentobject_tree.path_string != '$parentNodePath'";
-            $whereSql[] = "ezcontentobject_tree.path_string like '$parentNodePath%'";
+            if ( is_string( $params['parent_node_path'] ) )
+            {
+                // filter recursivly by main parent node id
+                // supported format is /1/2/144/256/ ( $node.path_string )
+                $parentNodePath = $params['parent_node_path'];
+                $whereSql[] = "ezcontentobject_tree.path_string != '$parentNodePath'";
+                $whereSql[] = "ezcontentobject_tree.path_string like '$parentNodePath%'";
+            }
+            else
+            {
+                eZDebug::writeError( "Parameter 'parent_node_path' needs to be node path_string, was '$params['parent_node_path']'.", __METHOD__ );
+            }
         }
 
         $classCondition = eZContentObjectTreeNode::createClassFilteringSQLString( $classFilterType, $classFilterArray );
