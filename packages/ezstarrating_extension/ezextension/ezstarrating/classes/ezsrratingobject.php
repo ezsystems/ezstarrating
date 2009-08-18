@@ -428,7 +428,7 @@ class ezsrRatingObject extends eZPersistentObject
             }
             else
             {
-                eZDebug::writeError( "Parameter 'parent_node_path' needs to be node path_string, was '$params['parent_node_path']'.", __METHOD__ );
+                eZDebug::writeError( "Parameter 'parent_node_path' needs to be node path_string, was '$params[parent_node_path]'.", __METHOD__ );
             }
         }
 
