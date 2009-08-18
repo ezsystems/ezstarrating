@@ -460,29 +460,29 @@ class ezsrRatingObject extends eZPersistentObject
             $orderArr = is_string( $params['sort_by'][0] ) ? array( $params['sort_by'] ) : $params['sort_by'];
             foreach( $orderArr as $key => $order )
             {
-                if ( $key !== 0 ) $orderBySql .= ',';
+                $orderBySqlPart = false;
                 $direction = isset( $order[1] ) ? $order[1] : false;
                 switch( $order[0] )
                 {
                     case 'rating':
                     {
-                        $orderBySql .= 'rating ' . ( $direction ? 'ASC' : 'DESC');
+                        $orderBySqlPart = 'rating ' . ( $direction ? 'ASC' : 'DESC');
                     }break;
                     case 'rating_count':
                     {
-                        $orderBySql .= 'rating_count ' . ( $direction ? 'ASC' : 'DESC');
+                        $orderBySqlPart = 'rating_count ' . ( $direction ? 'ASC' : 'DESC');
                     }break;
                     case 'object_count':
                     {
-                        $orderBySql .= 'object_count ' . ( $direction ? 'ASC' : 'DESC');
+                        $orderBySqlPart = 'object_count ' . ( $direction ? 'ASC' : 'DESC');
                     }break;
                     case 'published':
                     {
-                        $orderBySql .= 'ezcontentobject.published ' . ( $direction ? 'ASC' : 'DESC');
+                        $orderBySqlPart = 'ezcontentobject.published ' . ( $direction ? 'ASC' : 'DESC');
                     }break;
                     case 'modified':
                     {
-                        $orderBySql .= 'ezcontentobject.modified ' . ( $direction ? 'ASC' : 'DESC');
+                        $orderBySqlPart = 'ezcontentobject.modified ' . ( $direction ? 'ASC' : 'DESC');
                     }break;
                     case 'view_count':
                     {
@@ -490,8 +490,24 @@ class ezsrRatingObject extends eZPersistentObject
                         $selectSql  .= 'ezview_counter.count as view_count,';
                         $fromSql    .= ', ezview_counter';
                         $whereSql[]  = 'ezcontentobject_tree.node_id = ezview_counter.node_id';
-                        $orderBySql .= 'view_count ' . ( $direction ? 'ASC' : 'DESC');                        
+                        $orderBySqlPart = 'view_count ' . ( $direction ? 'ASC' : 'DESC');                        
                     }break;
+                    default:
+                    {
+                        if ( isset( $params['extended_attribute_filter'] ) )// allow custom sort types
+                        {
+                            $orderBySqlPart = $order[0] . ' ' . ( $direction ? 'ASC' : 'DESC');
+                        }
+                        else
+                        {
+                            eZDebug::writeError( "Unsuported sort type '$order[0]', for fetch_by_starrating().", __METHOD__ );
+                        }
+                    }break;
+                }
+                if ( $orderBySqlPart )
+                {
+                    if ( $key !== 0 ) $orderBySql .= ',';
+                    $orderBySql .= $orderBySqlPart;
                 }
             }
         }
