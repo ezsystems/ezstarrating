@@ -388,7 +388,7 @@ class ezsrRatingObject extends eZPersistentObject
             $selectSql  = 'ezcontentobject.*, owner_tree.*,';
             $groupBySql = 'GROUP BY owner_tree.node_id';
         }
-        
+
         if ( isset( $params['owner_parent_node_id'] ) and is_numeric( $params['owner_parent_node_id'] ) )
         {
             // filter by parent node of owner (main user group)
@@ -409,7 +409,7 @@ class ezsrRatingObject extends eZPersistentObject
             $ownerId = $params['owner_id'];
             $whereSql[] = 'ezcontentobject.owner_id = ' . $ownerId;
         }
-        
+
         if ( isset( $params['parent_node_id'] ) and is_numeric( $params['parent_node_id'] ) )
         {
             // filter by main parent node id
@@ -436,12 +436,12 @@ class ezsrRatingObject extends eZPersistentObject
         {
             $limit = (int) $params['limit'];
         }
-        
+
         if ( isset( $params['offset'] ))
         {
             $offset = (int) $params['offset'];
         }
-        
+
         if ( $includeNotRated )
         {
         	$ratingFromSql = 'LEFT JOIN ezstarrating
@@ -453,7 +453,7 @@ class ezsrRatingObject extends eZPersistentObject
             $ratingFromSql = ', ezstarrating';
             $ratingWhereSql = 'ezstarrating.contentobject_id = ezcontentobject.id AND';
         }
-        
+
         if ( isset( $params['sort_by'] ) && is_array( $params['sort_by'] ) )
         {
             $orderBySql = 'ORDER BY ';
@@ -588,7 +588,6 @@ class ezsrRatingObject extends eZPersistentObject
                 if ( $loadDataMap )
                     eZContentObject::fillNodeListAttributes( $ret );
             }
-            
         }
         else if ( $ret === false )
         {
