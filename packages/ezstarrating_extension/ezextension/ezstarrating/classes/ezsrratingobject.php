@@ -354,8 +354,8 @@ class ezsrRatingObject extends eZPersistentObject
     static function fetchNodeByRating( $params )
     {
         /**
-         * Works like fetch list/tree, execept:
-         * 1. Attribute filter is not supported (because of dependancy on normal sort_by param)
+         * Works like fetch list/tree, except:
+         * 1. Attribute filter is not supported (because of dependency on normal sort_by param)
          * 2. Supported sorting: rating, rating_count, object_count, published, modified and view_count.
          * 3. parent_node_id only works for list fetch, if you want tree fetch use 
          *    parent_node_path (format is like $node.path_string, as in '/1/2/144/256/').
