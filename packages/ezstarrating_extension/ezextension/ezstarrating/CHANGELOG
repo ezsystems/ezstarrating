@@ -4,6 +4,7 @@
 * Merged rating code from ezcore / ezyui
 * Code cleanup (cs & phpdoc and code name conventions)
 * Load css with YUI.Loader
+* fetch operator 'fetch_by_starrating' that works almost like list/tree fetch (see ezsrRatingObject::fetchNodeByRating)
 
 
 #v1.1  29 Jan 2008

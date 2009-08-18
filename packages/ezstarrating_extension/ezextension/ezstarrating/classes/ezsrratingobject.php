@@ -355,14 +355,14 @@ class ezsrRatingObject extends eZPersistentObject
     {
         /**
          * Works like fetch list/tree, execept:
-         * 1. Attribute filter and extended attribute filter are not supported.
+         * 1. Attribute filter is not supported (because of dependancy on normal sort_by param)
          * 2. Supported sorting: rating, rating_count, object_count, published, modified and view_count.
          * 3. parent_node_id only works for list fetch, if you want tree fetch use 
          *    parent_node_path (format is like $node.path_string, as in '/1/2/144/256/').
          * 4. depth and depth_operator are not supported (so parent_node_path gives you unlimited depth).
          * 5. There are additional advance params to see rating, rating_count, object_count pr user / group
          *    see group_by_owner, owner_parent_node_id, owner_parent_node_path and owner_id.
-         * 6. param 'include_not_rated' when set to true will use left join so also unrated content are returned
+         * 6. param 'include_not_rated' when set to true will use left join to also include unrated content
          */
 
         $ret         = array();
@@ -498,6 +498,8 @@ class ezsrRatingObject extends eZPersistentObject
 
         $whereSql = $whereSql ? implode( $whereSql, ' AND ') . ' AND ': '';
 
+        $extendedAttributeFilter = eZContentObjectTreeNode::createExtendedAttributeFilterSQLStrings( $params['extended_attribute_filter'] );
+
         $limitation = ( isset( $params['limitation']  ) && is_array( $params['limitation']  ) ) ? $params['limitation']: false;
         $limitationList = eZContentObjectTreeNode::getLimitationList( $limitation );
         $sqlPermissionChecking = eZContentObjectTreeNode::createPermissionCheckingSQL( $limitationList );
@@ -522,16 +524,19 @@ class ezsrRatingObject extends eZPersistentObject
                              ezcontentclass.identifier as class_identifier,
                              ezcontentclass.is_container as is_container
                              $versionNameTargets
+                             $extendedAttributeFilter[columns]
                             FROM
                              ezcontentobject_tree,
                              ezcontentobject_tree owner_tree,
                              ezcontentclass
                              $fromSql
                              $versionNameTables
+                             $extendedAttributeFilter[tables]
                              $sqlPermissionChecking[from]
                              ,ezcontentobject
                              $ratingFromSql
                             WHERE
+                             $extendedAttributeFilter[joins]
                              $ratingWhereSql
                              ezcontentobject.id = ezcontentobject_tree.contentobject_id AND
                              ezcontentobject.owner_id = owner_tree.contentobject_id AND
