@@ -328,7 +328,7 @@ class ezsrRatingObject extends eZPersistentObject
                                     'name'      => 'std' ));
             $cond = array( 'contentobject_id' => $ContentObjectID, // needed for table index
                            'contentobject_attribute_id' => $ContentObjectAttributeID );
-            $return = self::fetchObjectList( self::definition(), array() ,$cond, null, null, false, false, $custom );
+            $return = self::fetchObjectList( self::definition(), array(), $cond, null, null, false, false, $custom );
 
             if ( isset( $return[0]['std'] ) )
             {
@@ -343,6 +343,86 @@ class ezsrRatingObject extends eZPersistentObject
             $cachedStats[$ContentObjectID][$ContentObjectAttributeID] = $return;
         }
         return $return;
+    }
+
+    /**
+     * Fetch rating ( avrage + total + raw rating data ) by conditions
+     * 
+     * @param array $params (see inline doc for possible conditions)
+     * @return array Hash with rating data
+     */
+    static function fetchByConds( $params )
+    {
+        /**
+         * Conditions possible in $param (array hash):
+         *   int 'contentobject_id'
+         *   int 'contentobject_attribute_id'
+         *   int 'user_id'
+         *   string 'session_key'
+         *   bool 'as_object' By default: true
+         *   
+         *   Conditions can be combined as you wish,
+         */
+        $conds = array();
+
+        if ( isset( $params['contentobject_id'] ) )
+        {
+            $conds['contentobject_id'] = $params['contentobject_id'];
+        }
+        else if ( isset( $params['object_id'] ) )// Alias
+        {
+            $conds['contentobject_id'] = $params['object_id'];
+        }
+
+        if ( isset( $params['contentobject_attribute_id'] ) )
+        {
+            if ( !isset( $conds['contentobject_id'] ) ) $conds['contentobject_id'] = array( '!=', 0 );// to make sure index is used
+            $conds['contentobject_attribute_id'] = $params['contentobject_attribute_id'];
+        }
+
+        if ( isset( $params['user_id'] ) )
+        {
+            $conds['user_id'] = $params['user_id'];
+        }
+
+        if ( isset( $params['session_key'] ) )
+        {
+            if ( !isset( $conds['user_id'] ) ) $conds['user_id'] = array( '!=', 0 );// to make sure index is used
+            $conds['session_key'] = $params['session_key'];
+        }
+
+        $def = self::definition();
+        $rawData = eZPersistentObject::fetchObjectList( $def, null, $conds, array(), null, false);
+
+        if ( $rawData === null )
+        {
+            eZDebug::writeError( 'The ezstarrating table seems to be missing,
+                                  contact your administrator', __METHOD__ );
+            return false;
+        }
+
+        $ret = array('count' => count( $rawData ),
+                     'total' => 0
+        );
+
+        foreach ( $rawData as $row )
+        {
+            $ret['total'] += $row['rating'];
+        }
+
+        $ret['rating'] = $ret['total'] / $ret['count'];
+        $ret['rating_int'] = (int) round( $ret['rating'] );
+        $ret['total_int'] = (int) round( $ret['total'] );
+
+        if ( !isset( $params['as_object'] ) || $params['as_object'] == true )
+        {
+            $ret['ratings'] = eZPersistentObject::handleRows( $rawData, $def['class_name'], true );
+        }
+        else
+        {
+            $ret['ratings'] = $rawData;
+        }
+        return $ret;
     }
 
     /**

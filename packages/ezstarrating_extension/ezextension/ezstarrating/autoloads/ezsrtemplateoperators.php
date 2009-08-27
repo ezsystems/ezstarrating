@@ -59,39 +59,7 @@ class ezsrTemplateOperators
         {
             case 'ezsrrating':
             {
-                $ret = false;
-                $params = $namedParameters['params'];
-                $conds = array();
-
-                if ( isset( $params['node_id'] ))
-                {
-                    $obj = eZContentObject::fetchByNodeID( $params['node_id'], false );
-                    if ( isset( $obj['id'] ) ) $conds['contentobject_id'] = $obj['id'];
-                }
-
-                if ( isset( $params['contentobject_id'] ))
-                {
-                	$conds['contentobject_id'] = $params['contentobject_id'];
-                }
-
-                if ( isset( $params['contentobject_attribute_id'] ))
-                {
-                    // TODO: != 0 match on contentobject_id if not set to make sure index is used
-                    $conds['contentobject_attribute_id'] = $params['contentobject_attribute_id'];
-                }
-
-                if ( isset( $params['user_id'] ))
-                {
-                    $conds['user_id'] = $params['user_id'];
-                }
-
-                if ( isset( $params['session_key'] ))
-                {
-                    // TODO: != 0 match on user_id if not set to make sure index is used
-                    $conds['session_key'] = $params['session_key'];
-                }
-
-                $ret = eZPersistentObject::fetchObject( ezsrRatingObject::definition(), null, $conds );
+                $ret = ezsrRatingObject::fetchByConds( $namedParameters['params'] );
             } break;
             case 'fetch_by_starrating':
             {
