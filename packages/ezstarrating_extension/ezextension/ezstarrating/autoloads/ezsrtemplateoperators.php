@@ -71,12 +71,12 @@ class ezsrTemplateOperators
 
                 if ( isset( $params['contentobject_id'] ))
                 {
-                    // Note, there is no index on content object id, please use contentobject_attribute_id
                 	$conds['contentobject_id'] = $params['contentobject_id'];
                 }
 
                 if ( isset( $params['contentobject_attribute_id'] ))
                 {
+                    // TODO: != 0 match on contentobject_id if not set to make sure index is used
                     $conds['contentobject_attribute_id'] = $params['contentobject_attribute_id'];
                 }
 
@@ -87,6 +87,7 @@ class ezsrTemplateOperators
 
                 if ( isset( $params['session_key'] ))
                 {
+                    // TODO: != 0 match on user_id if not set to make sure index is used
                     $conds['session_key'] = $params['session_key'];
                 }
 
