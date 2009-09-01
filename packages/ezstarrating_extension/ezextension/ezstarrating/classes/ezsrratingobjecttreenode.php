@@ -55,11 +55,11 @@ class ezsrRatingObjectTreeNode extends eZContentObjectTreeNode
         {
             $def = parent::definition();
             $def['class_name'] = 'ezsrRatingObjectTreeNode';
-            $def['fields']['rating'] = array( 'name' => "Rating",
+            $def['fields']['rating'] = array( 'name' => 'Rating',
                                                                'datatype' => 'integer',
                                                                'default' => 0,
                                                                'required' => false );
-            $def['fields']['rating_count'] = array( 'name' => "RatingCount",
+            $def['fields']['rating_count'] = array( 'name' => 'RatingCount',
                                                                'datatype' => 'integer',
                                                                'default' => 0,
                                                                'required' => false );

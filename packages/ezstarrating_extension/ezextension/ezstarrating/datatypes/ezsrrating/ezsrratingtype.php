@@ -73,9 +73,10 @@ class ezsrRatingType extends eZDataType
     /*!
      Returns the meta data used for storing search indices.
     */
-    function metaData( $contentObjectAttribute )
+    function metaData( $objectAttribute )
     {
-      return $contentObjectAttribute->attribute( 'content' )->attribute('rating_average');
+        $ratingObj = $objectAttribute->attribute( 'content' );
+        return $ratingObj instanceof ezsrRatingObject ? $ratingObj->attribute('rating_count') > 0 : '';
     }
 
     /*!
@@ -103,8 +104,8 @@ class ezsrRatingType extends eZDataType
 
     function hasObjectAttributeContent( $objectAttribute )
     {
-            
-        return $objectAttribute->attribute( 'content' )->attribute('rating_count') > 0;
+        $ratingObj = $objectAttribute->attribute( 'content' );
+        return $ratingObj instanceof ezsrRatingObject ? $ratingObj->attribute('rating_count') > 0 : false;
     }
 
     /*!
@@ -112,13 +113,19 @@ class ezsrRatingType extends eZDataType
     */
     function objectAttributeContent( $objectAttribute )
     {
-        $ratingObj = ezsrRatingObject::fetchByObjectId( $objectAttribute->attribute('contentobject_id'), $objectAttribute->attribute('id') );
-
-        // Create empty object if none could be fetched
-        if (  !$ratingObj instanceof ezsrRatingObject )
+        $objectId = $objectAttribute->attribute('contentobject_id');
+        $attributeId = $objectAttribute->attribute('id');
+        $ratingObj = null;
+        if ( $objectId && $attributeId )
         {
-            $ratingObj = ezsrRatingObject::create( array('contentobject_id' => $objectAttribute->attribute('contentobject_id'),
-                                                       'contentobject_attribute_id' => $objectAttribute->attribute('id') ) );
+            $ratingObj = ezsrRatingObject::fetchByObjectId( $objectId, $attributeId );
+    
+            // Create empty object if none could be fetched
+            if (  !$ratingObj instanceof ezsrRatingObject )
+            {
+                $ratingObj = ezsrRatingObject::create( array('contentobject_id' => $objectId,
+                                                             'contentobject_attribute_id' => $attributeId ) );
+            }
         }
         return $ratingObj;
     }

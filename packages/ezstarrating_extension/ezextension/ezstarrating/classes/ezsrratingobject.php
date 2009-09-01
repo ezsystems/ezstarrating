@@ -122,9 +122,7 @@ class ezsrRatingObject extends eZPersistentObject
             eZDebug::writeError( 'Missing \'contentobject_id\' parameter!', __METHOD__ );
 
         if ( !isset( $row['contentobject_attribute_id'] ) )
-        {
             eZDebug::writeError( 'Missing \'contentobject_attribute_id\' parameter!', __METHOD__ );
-        }
 
         if ( !isset( $row['rating_average'] ) )
             $row['rating_average'] = 0.0;
