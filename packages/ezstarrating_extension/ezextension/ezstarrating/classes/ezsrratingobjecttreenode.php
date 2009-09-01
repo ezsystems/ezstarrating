@@ -44,7 +44,7 @@ class ezsrRatingObjectTreeNode extends eZContentObjectTreeNode
         $this->eZContentObjectTreeNode( $row );
     }
 
-    /** definition of FaceBookConnectUser, extends eZUser definition
+    /** definition of ezsrRatingObjectTreeNode, extends eZContentObjectTreeNode definition
      * 
      *  @return array
      */
