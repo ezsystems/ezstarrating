@@ -65,24 +65,26 @@ class ezsrServerFunctions extends ezjscServerFunctions
         if ( !$contentobject instanceof eZContentObject || !$contentobject->attribute('can_read') )
             return $ret;
 
-        $rateObj = ezsrRatingObject::create( array( 'contentobject_id' => $contentobjectAttribute->attribute('contentobject_id'),
+        $rateDataObj = ezsrRatingDataObject::create( array( 'contentobject_id' => $contentobjectAttribute->attribute('contentobject_id'),
                                                     'contentobject_attribute_id' =>  $ret['id'],
                                                     'rating' => $args[2]
         ));
-        if ( $rateObj->userHasRated() )
+        if ( $rateDataObj->userHasRated() )
         {
             $ret['already_rated'] = true;
         }
         else
         {
-        	$rateObj->store();
-        	eZContentCacheManager::clearContentCacheIfNeeded( $rateObj->attribute('contentobject_id') );
+        	$rateDataObj->store();
+        	$avgRateObj = $rateDataObj->getAverageRating();
+        	$avgRateObj->updateFromRatingData();
+            $avgRateObj->store();
+        	eZContentCacheManager::clearContentCacheIfNeeded( $rateDataObj->attribute('contentobject_id') );
         	$ret['rated'] = true;
         	$ret['stats'] = array(
-        	   'number' => $rateObj->attribute('number'),
-        	   'average' => $rateObj->attribute('average'),
-        	   'rounded_average' => $rateObj->attribute('rounded_average'),
-        	   'std_deviation' => $rateObj->attribute('std_deviation'),
+        	   'rating_count' => $avgRateObj->attribute('rating_count'),
+        	   'rating_average' => $avgRateObj->attribute('rating_average'),
+        	   'rounded_average' => $avgRateObj->attribute('rounded_average'),
         	);
         }
         return $ret;
@@ -99,11 +101,11 @@ class ezsrServerFunctions extends ezjscServerFunctions
         if ( !isset( $args[2] ) || !is_numeric( $args[0] ) || !is_numeric( $args[1] ) )
             return null;
 
-        $rateObj = ezsrRatingObject::create( array( 'contentobject_id' => $args[0],
+        $rateDataObj = ezsrRatingDataObject::create( array( 'contentobject_id' => $args[0],
                                                     'contentobject_attribute_id' =>  $args[1]
         ));
 
-        return $rateObj->userHasRated();
+        return $rateDataObj->userHasRated();
     }
 
     /**

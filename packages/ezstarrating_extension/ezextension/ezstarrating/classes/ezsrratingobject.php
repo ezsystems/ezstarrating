@@ -25,13 +25,6 @@
 
 class ezsrRatingObject extends eZPersistentObject
 {
-	 /**
-     * Used by {@link ezsrRatingObject::userHasRated()} to cache value.
-     * 
-     * @var bool $currentUserHasRated
-     */
-	protected $currentUserHasRated = null;
-
      /**
      * Construct, use {@link ezsrRatingObject::create()} to create new objects.
      * 
@@ -45,31 +38,6 @@ class ezsrRatingObject extends eZPersistentObject
     static function definition()
     {
         static $def = array( 'fields' => array(
-                    'id' => array(
-                      'name' => 'id',
-                      'datatype' => 'integer',
-                      'default' => 0,
-                      'required' => true ),
-                    'created_at' => array(
-                      'name' => 'created_at',
-                      'datatype' => 'integer',
-                      'default' => 0,
-                      'required' => true ),
-                    'user_id' => array(
-                      'name' => 'user_id',
-                      'datatype' => 'integer',
-                      'default' => 0,
-                      'required' => true ),
-                    'rating' => array(
-                      'name' => 'rating',
-                      'datatype' => 'integer',
-                      'default' => 0,
-                      'required' => true ),
-                    'session_key' => array(
-                      'name' => 'session_key',
-                      'datatype' => 'string',
-                      'default' => '',
-                      'required' => true ),
                     'contentobject_id' => array(
                       'name' => 'contentobject_id',
                       'datatype' => 'integer',
@@ -80,349 +48,132 @@ class ezsrRatingObject extends eZPersistentObject
                       'datatype' => 'integer',
                       'default' => 0,
                       'required' => true ),
+                    'rating_average' => array(
+                      'name' => 'rating_average',
+                      'datatype' => 'float',
+                      'default' => 0,
+                      'required' => false ),
+                    'rating_count' => array(
+                      'name' => 'rating_count',
+                      'datatype' => 'integer',
+                      'default' => 0,
+                      'required' => false ),
                   ),
-                  'keys' => array( 'id' ),
+                  'keys' => array( 'contentobject_id', 'contentobject_attribute_id' ),
                   'function_attributes' => array(
-                      'number' => 'getNumber',
-                      'average' => 'getAverage',
                       'rounded_average' => 'getRoundedAverage',
-                      'std_deviation' => 'getSTD',
-                      //'has_rated' => 'userHasRated', (pr user: as in not cache safe)
+                      'rating_data' => 'getRatingData'
                   ),
-                  'increment_key' => 'id',
                   'class_name' => 'ezsrRatingObject',
                   'name' => 'ezstarrating' );
         return $def;
     }
 
-    /* Function Attributes Methods */
-    function getNumber()
-    {
-        $stats = self::stats( $this->attribute('contentobject_id'), $this->attribute('contentobject_attribute_id') );
-        $return = 0;
-        if ( isset( $stats['count'] ) )
-            $return = $stats['count'];
-        return $return;
-    }
-
-    function getAverage()
-    {
-        $stats = self::stats( $this->attribute('contentobject_id'), $this->attribute('contentobject_attribute_id') );
-        $return = 0;
-        if ( isset( $stats['average'] ) )
-            $return = $stats['average'];
-        return $return;
-    }
-
+    /**
+     * Get a rounded (nearest 0.5) version of 'rating_average'
+     * 
+     * @return float
+     */
     function getRoundedAverage()
     {
-        $avg = $this->getAverage();
+        $avg = $this->attribute('rating_average');
         $rnd_avg = intval($avg * 2 + 0.5) / 2;
         return $rnd_avg;
     }
 
-    function getSTD()
-    {
-        $stats = self::stats( $this->attribute('contentobject_id'), $this->attribute('contentobject_attribute_id') );
-        $return = 0;
-        if ( isset( $stats['std'] ) )
-            $return = $stats['std'];
-        return $return;
-    }
-
     /**
-     * Figgure out if current user has rated, since eZ Publish changes session id as of 4.1
-     * on login / logout, a couple of things needs to be checked.
-     * 1. Session variable 'ezsrRatedAttributeIdList' for list of attribute_id's
-     * 2a. (annonymus user) check against session key
-     * 2b. (logged in user) check against user id
+     * Fetch rating data
      * 
-     * @param int $contentobjecrId
-     * @param int $contentobjectAttributeId (optional, check only by object id if set to 0)
-     * @return bool
+     * @return array
      */
-    function userHasRated()
+    function getRatingData()
     {
-        if ( $this->currentUserHasRated === null )
-        {
-            $http = eZHTTPTool::instance();
-            if ( $http->hasSessionVariable('ezsrRatedAttributeIdList') )
-            	$attributeIdList = explode( ',', $http->sessionVariable('ezsrRatedAttributeIdList') );
-            else
-                $attributeIdList = array();
-
-            
-            $ini = eZINI::instance();
-            $contentobjectAttributeId = $this->attribute('contentobject_attribute_id');
-            if ( in_array( $contentobjectAttributeId, $attributeIdList ) && $ini->variable( 'eZStarRating', 'UseUserSession' ) === 'enabled' )
-            {
-            	$this->currentUserHasRated = true;
-            }
-            else
-            {
-                $sessionKey = $this->attribute('session_key');
-                $userId = $this->attribute('user_id');
-                if ( $userId == eZUser::anonymousId() )
-                {
-                    $cond = array( 'user_id' => $userId, // for table index
-                                   'session_key' => $sessionKey,
-                                   'contentobject_id' => $this->attribute('contentobject_id'), // for table index
-                                   'contentobject_attribute_id' => $contentobjectAttributeId );
-                }
-                else
-                {
-                    $cond = array( 'user_id' => $userId,
-                                   'contentobject_id' => $this->attribute('contentobject_id'), // for table index
-                                   'contentobject_attribute_id' => $contentobjectAttributeId );
-                }
-                $this->currentUserHasRated = eZPersistentObject::count( self::definition(), $cond, 'id' ) != 0;
-            }
-        }    	
-        return $this->currentUserHasRated;
+        return ezsrRatingDataObject::fetchByObjectId( $this->attribute('contentobject_id'), $this->attribute('contentobject_attribute_id') );
     }
 
     /**
-     * Override store function to add some custom logic for setting create time and 
-     * store contentobject_attribute_id in session to avoid several ratings from same user.
+     * Remove calculated ratings by content object id and optionally attribute id.
      * 
-     * @param array $fieldFilters
-     */
-    function store( $fieldFilters = null )
-    {
-        $this->setAttribute( 'created_at', time() );
-        if ( $this->attribute( 'user_id' ) == eZUser::currentUserID() )
-        {
-            // Store attribute id in session to avoid multiple ratings by same user even if he logs out (gets new session key)
-        	$http = eZHTTPTool::instance();
-            $attributeIdList = $this->attribute( 'contentobject_attribute_id' );
-            if ( $http->hasSessionVariable('ezsrRatedAttributeIdList') )
-            {
-                $attributeIdList = $http->sessionVariable('ezsrRatedAttributeIdList') . ',' . $attributeIdList;
-            }
-            $http->setSessionVariable('ezsrRatedAttributeIdList', $attributeIdList );
-        }
-        eZPersistentObject::store( $fieldFilters );
-    }
-
-    /**
-     * Remove ratings by content object attribute id.
-     * 
+     * @param int $contentobjectID
      * @param int $contentobjectAttributeId
      */
-    static function removeAll( $contentobjectAttributeId )
+    static function removeByObjectId( $contentobjectID, $contentobjectAttributeId = null )
     {
-        $cond = array( 'contentobject_attribute_id' => $contentobjectAttributeId );
+        $cond = array( 'contentobject_id' => $contentobjectID );
+        if ( $contentobjectAttributeId !== null )
+        {
+            $cond['contentobject_attribute_id'] = $contentobjectAttributeId;
+        }
         eZPersistentObject::removeObject( self::definition(), $cond );
     }
-
-    /**
-     * Fetch rating by rating id!
-     * 
-     * @param int $id
-     * @return null|ezsrRatingObject
-     */
-    static function fetch( $id )
-    {
-        $cond = array( 'id' => $id );
-        $return = eZPersistentObject::fetchObject( self::definition(), null, $cond );
-        return $return;
-    }
-
-    /**
-     * Create a ezsrRatingObject and store it.
-     * Note: Access check against content object is not done in this function, make sure you check at least can_read on object first!
-     * 
-     * @param int $contentobjectAttributeId
-     * @param int $version
-     * @param int $rate (between 1 and 5)
-     * @param bool $onlyStoreIfUserNotAlreadyRated
-     * @return null|ezsrRatingObject
-     */
-    static function rate( $contentobjectAttributeId, $version, $rate, $onlyStoreIfUserNotAlreadyRated = true )
-    {
-        $rating = null;
-        if ( is_numeric( $contentobjectAttributeId ) &&
-             is_numeric( $version ) &&
-             is_numeric( $rate) &&
-             $rate <= 5 && $rate >= 1 )
-        {
-            $contentobjectAttribute = eZContentObjectAttribute::fetch( $contentobjectAttributeId, $version );
-            if ( $contentobjectAttribute instanceof eZContentObjectAttribute
-              && $contentobjectAttribute->attribute('data_type_string') === ezsrRatingType::DATA_TYPE_STRING  )
-            {
-                $contentobjectId = $contentobjectAttribute->attribute('contentobject_id');
-                $row = array ('contentobject_attribute_id' => $contentobjectAttributeId,
-                              'contentobject_id'           => $contentobjectId,
-                              'rating'                     => $rate);
-
-                $rating = self::create( $row );
-                if ( !$onlyStoreIfUserNotAlreadyRated || !$rating->userHasRated() )
-                {
-                    $rating->store();
-                    // clear the cache for all nodes associated with this object
-                    eZContentCacheManager::clearContentCacheIfNeeded( $contentobjectId, true, false );
-                }
-            }
-        }
-        return $rating;
-    }
-
+    
     /**
      * Create a ezsrRatingObject by definition data (but do not store it, thats up to you!)
      * NOTE: you have to provide the following attributes:
      *     contentobject_id
      *     contentobject_attribute_id
-     *     rating (this is only requried if you plan to store the object)
      * 
      * @param array $row
-     * @return ezsrRatingObject
+     * @return ezsrRatingDataObject
      */
     static function create( $row = array() )
     {
-        if ( !isset( $row['session_key'] ) )
-        {
-            $http = eZHTTPTool::instance();
-            $row['session_key'] = $http->getSessionKey();
-        }
-
-        if ( !isset( $row['user_id'] ) )
-        {
-            $row['user_id'] = eZUser::currentUserID();
-        }
-        
         if ( !isset( $row['contentobject_id'] ) )
-        {
             eZDebug::writeError( 'Missing \'contentobject_id\' parameter!', __METHOD__ );
-        }
 
         if ( !isset( $row['contentobject_attribute_id'] ) )
-        {
             eZDebug::writeError( 'Missing \'contentobject_attribute_id\' parameter!', __METHOD__ );
-        }
+
+        if ( !isset( $row['rating_average'] ) )
+            $row['rating_average'] = 0.0;
+
+        if ( !isset( $row['rating_count'] ) )
+            $row['rating_count'] = 0;
 
         $object = new self( $row );
         return $object;
     }
 
     /**
-     * Fetch and cache rating stats pr attribute id.
+     * Fetch rating data by content object id and optionally attribute id!
      * 
-     * @param int $ContentObjectID
-     * @param int $ContentObjectAttributeID
-     * @return array (with count, average and std values)
+     * @param int $contentobjectID
+     * @return null|ezsrRatingObject
      */
-    static function stats( $ContentObjectID, $ContentObjectAttributeID )
+    static function fetchByObjectId( $contentobjectID, $contentobjectAttributeId = null )
     {
-        static $cachedStats = array( 0 => null );
-    	if ( isset( $cachedStats[$ContentObjectID][$ContentObjectAttributeID] ) )
+        $cond = array( 'contentobject_id' => $contentobjectID );
+        if ( $contentobjectAttributeId !== null )
         {
-            $return = $cachedStats[$ContentObjectID][$ContentObjectAttributeID];
+            $cond['contentobject_attribute_id'] = $contentobjectAttributeId;
         }
-        else
-        {
-            $custom = array( array( 'operation' => 'count( id )',
-                                    'name'      => 'count' ) ,
-                             array( 'operation' => 'avg( rating )',
-                                    'name'      => 'average' ),
-                             array( 'operation' => 'std( rating )',
-                                    'name'      => 'std' ));
-            $cond = array( 'contentobject_id' => $ContentObjectID, // needed for table index
-                           'contentobject_attribute_id' => $ContentObjectAttributeID );
-            $return = self::fetchObjectList( self::definition(), array(), $cond, null, null, false, false, $custom );
-
-            if ( isset( $return[0]['std'] ) )
-            {
-                $return = $return[0];
-            }
-
-            if ( !isset( $cachedStats[$ContentObjectID] ) )
-            {
-                $cachedStats[$ContentObjectID] = array();
-            }
-
-            $cachedStats[$ContentObjectID][$ContentObjectAttributeID] = $return;
-        }
+        $return = eZPersistentObject::fetchObject( self::definition(), null, $cond );
         return $return;
     }
-
+    
     /**
-     * Fetch rating ( avrage + total + raw rating data ) by conditions
+     * Update rating_average and rating_count from rating data.
+     * Note: Does not store the change!
      * 
-     * @param array $params (see inline doc for possible conditions)
-     * @return array Hash with rating data
+     * @return bool False if no rating data was returned so no updates could be done
      */
-    static function fetchByConds( $params )
+    function updateFromRatingData()
     {
-        /**
-         * Conditions possible in $param (array hash):
-         *   int 'contentobject_id'
-         *   int 'contentobject_attribute_id'
-         *   int 'user_id'
-         *   string 'session_key'
-         *   bool 'as_object' By default: true
-         *   
-         *   Conditions can be combined as you wish,
-         */
-        $conds = array();
-
-        if ( isset( $params['contentobject_id'] ) )
+        $custom = array( array( 'operation' => 'count( id )',
+                                'name'      => 'rating_count' ) ,
+                         array( 'operation' => 'avg( rating )',
+                                'name'      => 'rating_average' ));
+        $cond = array( 'contentobject_id' => $this->attribute('contentobject_id'),
+                       'contentobject_attribute_id' => $this->attribute('contentobject_attribute_id') );
+        $data = self::fetchObjectList( ezsrRatingDataObject::definition(), array(), $cond, null, null, false, false, $custom );
+        if ( isset( $data[0]['rating_average'] ) )
         {
-            $conds['contentobject_id'] = $params['contentobject_id'];
+            $this->setAttribute( 'rating_average', $data[0]['rating_average'] );
+            $this->setAttribute( 'rating_count', $data[0]['rating_count'] );
+            return true;
         }
-        else if ( isset( $params['object_id'] ) )// Alias
-        {
-            $conds['contentobject_id'] = $params['object_id'];
-        }
+        return false;
 
-        if ( isset( $params['contentobject_attribute_id'] ) )
-        {
-            if ( !isset( $conds['contentobject_id'] ) ) $conds['contentobject_id'] = array( '!=', 0 );// to make sure index is used
-            $conds['contentobject_attribute_id'] = $params['contentobject_attribute_id'];
-        }
-
-        if ( isset( $params['user_id'] ) )
-        {
-            $conds['user_id'] = $params['user_id'];
-        }
-
-        if ( isset( $params['session_key'] ) )
-        {
-            if ( !isset( $conds['user_id'] ) ) $conds['user_id'] = array( '!=', 0 );// to make sure index is used
-            $conds['session_key'] = $params['session_key'];
-        }
-
-        $def = self::definition();
-        $rawData = eZPersistentObject::fetchObjectList( $def, null, $conds, array(), null, false);
-
-        if ( $rawData === null )
-        {
-            eZDebug::writeError( 'The ezstarrating table seems to be missing,
-                                  contact your administrator', __METHOD__ );
-            return false;
-        }
-
-        $ret = array('count' => count( $rawData ),
-                     'total' => 0
-        );
-
-        foreach ( $rawData as $row )
-        {
-            $ret['total'] += $row['rating'];
-        }
-
-        $ret['rating'] = $ret['total'] / $ret['count'];
-        $ret['rating_int'] = (int) round( $ret['rating'] );
-        $ret['total_int'] = (int) round( $ret['total'] );
-
-        if ( !isset( $params['as_object'] ) || $params['as_object'] == true )
-        {
-            $ret['ratings'] = eZPersistentObject::handleRows( $rawData, $def['class_name'], true );
-        }
-        else
-        {
-            $ret['ratings'] = $rawData;
-        }
-        return $ret;
     }
 
     /**
@@ -561,6 +312,7 @@ class ezsrRatingObject extends eZPersistentObject
                     }break;
                     case 'object_count':
                     {
+                        $selectSql  .= 'COUNT( ezcontentobject.id ) as object_count,';
                         $orderBySqlPart = 'object_count ' . ( $direction ? 'ASC' : 'DESC');
                     }break;
                     case 'published':
@@ -620,9 +372,8 @@ class ezsrRatingObject extends eZPersistentObject
         $db  = eZDB::instance();
         $sql = "SELECT
                              $selectSql
-                             AVG( ezstarrating.rating  ) as rating,
-                             COUNT( ezstarrating.rating  ) as rating_count,
-                             COUNT( ezcontentobject.id ) as object_count,
+                             AVG( ezstarrating.rating_average ) as rating,
+                             SUM( ezstarrating.rating_count ) as rating_count,
                              ezcontentclass.serialized_name_list as class_serialized_name_list,
                              ezcontentclass.identifier as class_identifier,
                              ezcontentclass.is_container as is_container

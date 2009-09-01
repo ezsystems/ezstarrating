@@ -8,7 +8,7 @@
 </ul>
 
 {'Rating: %current_rating/5'|i18n('extension/ezstarrating/datatype', '', hash( '%current_rating', concat('<span id="ezsr_average_', $attribute.id, '" class="ezsr-average-rating">', $rating.rounded_average|wash, '</span>') ))}
-({'%rating_count votes casted'|i18n('extension/ezstarrating/datatype', '', hash( '%rating_count', concat('<span id="ezsr_total_', $attribute.id, '">', $rating.number|wash, '</span>') ))}) 
+({'%rating_count votes casted'|i18n('extension/ezstarrating/datatype', '', hash( '%rating_count', concat('<span id="ezsr_total_', $attribute.id, '">', $rating.rating_count|wash, '</span>') ))}) 
 <p id="ezsr_just_rated_{$attribute.id}" class="ezsr-just-rated hide">{'Thank you for rating!'|i18n('extension/ezstarrating/datatype', 'When rating')}</p>
 <p id="ezsr_has_rated_{$attribute.id}" class="ezsr-has-rated hide">{'You have already rated this page, you can only rate it once!'|i18n('extension/ezstarrating/datatype', 'When rating')}</p>
 
@@ -53,7 +53,7 @@ YUI( YUI3_config ).use('node', 'event', 'io-ez', 'ezsr-star-rating-css', functio
                 Y.all('#ezsr_just_rated_' + data.id).removeClass('hide');
                 Y.all('#ezsr_rating_percent_' + data.id).setStyle('width', (( data.stats.rounded_average / 5 ) * 100 ) + '%' );
                 Y.all('#ezsr_average_' + data.id).setContent( data.stats.rounded_average );
-                Y.all('#ezsr_total_' + data.id).setContent( data.stats.number );
+                Y.all('#ezsr_total_' + data.id).setContent( data.stats.rating_count );
             }
             else if ( data.already_rated  )
                 Y.all('#ezsr_has_rated_' + data.id).removeClass('hide');
@@ -71,3 +71,4 @@ YUI( YUI3_config ).use('node', 'event', 'io-ez', 'ezsr-star-rating-css', functio
 {rdelim});
 </script>
 {/run-once}
+{undef $rating}

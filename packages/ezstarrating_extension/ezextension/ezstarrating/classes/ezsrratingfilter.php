@@ -76,8 +76,8 @@ class ezsrRatingFilter
             $sqlWhere = 'ezstarrating.contentobject_id = ezcontentobject.id AND';
         }
 
-        return array('tables' => $sqlFrom, 'joins' => $sqlWhere, 'columns' => ', AVG( ezstarrating.rating  ) as rating,
-                             COUNT( ezstarrating.rating  ) as rating_count',
+        return array('tables' => $sqlFrom, 'joins' => $sqlWhere, 'columns' => ', AVG( ezstarrating.rating_average ) as rating,
+                             SUM( ezstarrating.rating_count ) as rating_count',
                       'group_by' => 'GROUP BY ezcontentobject.id');
     }
 }

@@ -50,7 +50,8 @@ class ezsrRatingType extends eZDataType
       // Remove all ratings associated with thes objectAttribute;
       if ($version == null)
       {
-          ezsrRatingObject::removeAll( $objectAttribute->attribute('id') );
+          ezsrRatingObject::removeByObjectId( $objectAttribute->attribute('contentobject_id'), $objectAttribute->attribute('id') );
+          ezsrRatingDataObject::removeByObjectId( $objectAttribute->attribute('contentobject_id'), $objectAttribute->attribute('id') );
       }
     }
 
@@ -74,9 +75,7 @@ class ezsrRatingType extends eZDataType
     */
     function metaData( $contentObjectAttribute )
     {
-      // TODO Should return the rating average...might have to think this through
-      // as the avgerage changes independant of publishing of item 
-      return 2;
+      return $contentObjectAttribute->attribute( 'content' )->attribute('rating_average');
     }
 
     /*!
@@ -84,17 +83,17 @@ class ezsrRatingType extends eZDataType
     */
     function title( $objectAttribute, $name = null)
     {
-        return $this->metaData($objectAttribute);
+        return $this->metaData( $objectAttribute );
     }
 
     function isIndexable()
     {
-        return false;
+        return true;
     }
 
     function sortKey( $objectAttribute )
     {
-        return $this->metaData($objectAttribute);
+        return $this->metaData( $objectAttribute );
     }
   
     function sortKeyType()
@@ -102,9 +101,10 @@ class ezsrRatingType extends eZDataType
         return 'integer';
     }
 
-    function hasObjectAttributeContent( $contentObjectAttribute )
+    function hasObjectAttributeContent( $objectAttribute )
     {
-        return true;
+            
+        return $objectAttribute->attribute( 'content' )->attribute('rating_count') > 0;
     }
 
     /*!
@@ -112,9 +112,15 @@ class ezsrRatingType extends eZDataType
     */
     function objectAttributeContent( $objectAttribute )
     {
-        $object = ezsrRatingObject::create( array('contentobject_id' => $objectAttribute->attribute('contentobject_id'),
-                                                  'contentobject_attribute_id' => $objectAttribute->attribute('id') ) );
-        return $object;
+        $ratingObj = ezsrRatingObject::fetchByObjectId( $objectAttribute->attribute('contentobject_id'), $objectAttribute->attribute('id') );
+
+        // Create empty object if none could be fetched
+        if (  !$ratingObj instanceof ezsrRatingObject )
+        {
+            $ratingObj = ezsrRatingObject::create( array('contentobject_id' => $objectAttribute->attribute('contentobject_id'),
+                                                       'contentobject_attribute_id' => $objectAttribute->attribute('id') ) );
+        }
+        return $ratingObj;
     }
 }
 

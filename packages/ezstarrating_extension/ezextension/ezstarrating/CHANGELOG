@@ -6,6 +6,8 @@
 * Load css with YUI.Loader
 * fetch operator 'fetch_by_starrating' that works almost like list/tree fetch (see ezsrRatingObject::fetchNodeByRating)
 * fetch operator 'ezsrrating' to fetch rating data by conditions ( contentobject_id/contentobject_attribute_id/user_id/session_key )
+* Fixed #15370: Fix scalebilty of ezstartrating before release! 
+  (refactored table structure to have one table for precomputed rating values for faster read)
 
 
 #v1.1  29 Jan 2008
