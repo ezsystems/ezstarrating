@@ -122,7 +122,9 @@ class ezsrRatingObject extends eZPersistentObject
             eZDebug::writeError( 'Missing \'contentobject_id\' parameter!', __METHOD__ );
 
         if ( !isset( $row['contentobject_attribute_id'] ) )
+        {
             eZDebug::writeError( 'Missing \'contentobject_attribute_id\' parameter!', __METHOD__ );
+        }
 
         if ( !isset( $row['rating_average'] ) )
             $row['rating_average'] = 0.0;
@@ -410,24 +412,28 @@ class ezsrRatingObject extends eZPersistentObject
         $server = isset( $sqlPermissionChecking['temp_tables'][0] ) ? eZDBInterface::SERVER_SLAVE : false;
 
         if ( $offset !== false || $limit !== false )
-            $ret = $db->arrayQuery( $sql, array( 'offset' => $offset, 'limit' => $limit ), $server );
+            $rows = $db->arrayQuery( $sql, array( 'offset' => $offset, 'limit' => $limit ), $server );
         else
-            $ret = $db->arrayQuery( $sql, null, $server );
+            $rows = $db->arrayQuery( $sql, null, $server );
 
         $db->dropTempTableList( $sqlPermissionChecking['temp_tables'] );
 
         unset($db);
 
-        if ( isset( $ret[0] ) && is_array( $ret ) )
+        if ( isset( $rows[0] ) && is_array( $rows ) )
         {
             if ( $asObject )
             {
-                $ret = eZContentObjectTreeNode::makeObjectsArray( $ret );
+                $ret = ezsrRatingObjectTreeNode::makeObjectsArray( $rows );
                 if ( $loadDataMap )
                     eZContentObject::fillNodeListAttributes( $ret );
             }
+            else
+            {
+                $ret = $rows;
+            }
         }
-        else if ( $ret === false )
+        else if ( $rows === false )
         {
             eZDebug::writeError( 'The ezstarrating table seems to be missing,
                           contact your administrator', __METHOD__ );
