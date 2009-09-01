@@ -20,6 +20,52 @@ $schema = array (
         'not_null' => '1',
         'default' => 0,
       ),
+      'rating_average' => 
+      array (
+        'type' => 'float',
+        'not_null' => '1',
+        'default' => 0,
+      ),
+      'rating_count' => 
+      array (
+        'length' => 11,
+        'type' => 'int',
+        'not_null' => '1',
+        'default' => 0,
+      ),
+    ),
+    'indexes' => 
+    array (
+      'PRIMARY' => 
+      array (
+        'type' => 'primary',
+        'fields' => 
+        array (
+          0 => 'contentobject_id',
+          1 => 'contentobject_attribute_id',
+        ),
+      ),
+    ),
+  ),
+  'ezstarrating_data' => 
+  array (
+    'name' => 'ezstarrating_data',
+    'fields' => 
+    array (
+      'contentobject_attribute_id' => 
+      array (
+        'length' => 11,
+        'type' => 'int',
+        'not_null' => '1',
+        'default' => 0,
+      ),
+      'contentobject_id' => 
+      array (
+        'length' => 11,
+        'type' => 'int',
+        'not_null' => '1',
+        'default' => 0,
+      ),
       'created_at' => 
       array (
         'length' => 11,
@@ -34,8 +80,7 @@ $schema = array (
       ),
       'rating' => 
       array (
-        'length' => 11,
-        'type' => 'int',
+        'type' => 'float',
         'not_null' => '1',
         'default' => 0,
       ),
