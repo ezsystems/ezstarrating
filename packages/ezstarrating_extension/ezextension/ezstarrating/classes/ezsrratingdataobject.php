@@ -323,6 +323,10 @@ class ezsrRatingDataObject extends eZPersistentObject
          *   Conditions can be combined as you wish,
          */
         $conds = array();
+        $limit = null;
+        $sorts = array();
+        $asObject = isset( $params['as_object'] ) ? $params['as_object'] : true;
+
         if ( isset( $params['contentobject_id'] ) )
         {
             $conds['contentobject_id'] = $params['contentobject_id'];
@@ -349,19 +353,30 @@ class ezsrRatingDataObject extends eZPersistentObject
             $conds['session_key'] = $params['session_key'];
         }
 
-        $def = self::definition();
-        $rows = eZPersistentObject::fetchObjectList( $def, null, $conds, array(), null, false);
+        if ( isset( $params['limit'] ) )
+        {
+            $limit = array( 'length' => $params['limit'], 'offset' => (isset( $params['offset'] ) ? $params['offset'] : 0 ) );
+        }
+        else if ( isset( $params['offset'] ) )
+        {
+            $limit = array( 'offset' =>  $params['offset'] );
+        }
+
+        if ( isset( $params['sort_by'] ) )
+        {
+            if ( isset( $params['sort_by'][1] ) && is_array( $params['sort_by'] ) )
+                $sorts = array( $params['sort_by'][0] => ( $params['sort_by'][1] ? 'asc' : 'desc' ) );
+            else
+                $sorts[ $params['sort_by'] ] = 'asc';
+        }
+        
+        $rows = eZPersistentObject::fetchObjectList( self::definition(), null, $conds, $sorts, $limit, $asObject );
 
         if ( $rows === null )
         {
             eZDebug::writeError( 'The ezstarrating table seems to be missing,
                                   contact your administrator', __METHOD__ );
             return false;
-        }
-
-        if ( !isset( $params['as_object'] ) || $params['as_object'] == true )
-        {
-            return eZPersistentObject::handleRows( $rows, $def['class_name'], true );
         }
         return $rows;
     }
