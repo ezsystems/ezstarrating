@@ -255,6 +255,9 @@ class ezsrRatingDataObject extends eZPersistentObject
             if ( !$rating->userHasRated() )
             {
                 $rating->store();
+                $avgRating = $rating->getAverageRating();
+                $avgRating->updateFromRatingData();
+                $avgRating->store();
                 // clear the cache for all nodes associated with this object
                 eZContentCacheManager::clearContentCacheIfNeeded( $contentobjectId, true, false );
             }
