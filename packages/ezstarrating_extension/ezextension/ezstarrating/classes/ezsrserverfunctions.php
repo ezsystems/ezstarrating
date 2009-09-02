@@ -98,7 +98,7 @@ class ezsrServerFunctions extends ezjscServerFunctions
      */
     public static function user_has_rated( $args )
     {
-        if ( !isset( $args[2] ) || !is_numeric( $args[0] ) || !is_numeric( $args[1] ) )
+        if ( !isset( $args[1] ) || !is_numeric( $args[0] ) || !is_numeric( $args[1] ) )
             return null;
 
         $rateDataObj = ezsrRatingDataObject::create( array( 'contentobject_id' => $args[0],
