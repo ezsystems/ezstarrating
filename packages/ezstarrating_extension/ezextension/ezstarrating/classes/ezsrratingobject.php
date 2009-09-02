@@ -173,7 +173,37 @@ class ezsrRatingObject extends eZPersistentObject
             return true;
         }
         return false;
+    }
+    
+    /**
+     * Fetch and cache rating stats pr object id.
+     * ( usefull when you have several rating attributes pr object )
+     * 
+     * @param int $ContentObjectID
+     * @return array (with count and average values)
+     */
+    static function stats( $ContentObjectID )
+    {
+        static $cachedStats = array( 0 => null );
+        if ( isset( $cachedStats[$ContentObjectID] ) )
+        {
+            return $cachedStats[$ContentObjectID];
+        }
+        else
+        {
+            $custom = array( array( 'operation' => 'sum( rating_count )',
+                                    'name'      => 'rating_count' ) ,
+                             array( 'operation' => 'avg( rating_average )',
+                                    'name'      => 'rating_average' ) );
+            $cond = array( 'contentobject_id' => $ContentObjectID );
+            $return = self::fetchObjectList( self::definition(), array() ,$cond, null, null, false, false, $custom );
 
+            if ( isset( $return[0]['rating_count'] ) )
+                $return = $return[0];
+
+            $cachedStats[$ContentObjectID] = $return;
+        }
+        return $return;
     }
 
     /**

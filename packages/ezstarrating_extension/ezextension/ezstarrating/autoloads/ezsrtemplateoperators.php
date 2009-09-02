@@ -32,6 +32,7 @@ class ezsrTemplateOperators
     function operatorList()
     {
         return array( 'fetch_starrating_data',
+                      'fetch_starrating_stats',
                       'fetch_by_starrating'
                       );
     }
@@ -46,6 +47,9 @@ class ezsrTemplateOperators
         return array( 'fetch_starrating_data' => array( 'params' => array( 'type' => 'array',
                                               'required' => true,
                                               'default' => array() )),
+                      'fetch_starrating_stats' => array( 'object_id' => array( 'type' => 'integer',
+                                              'required' => true,
+                                              'default' => 0 )),
                       'fetch_by_starrating' => array( 'params' => array( 'type' => 'array',
                                               'required' => false,
                                               'default' => array() ))
@@ -60,6 +64,10 @@ class ezsrTemplateOperators
             case 'fetch_starrating_data':
             {
                 $ret = ezsrRatingDataObject::fetchByConds( $namedParameters['params'] );
+            } break;
+            case 'fetch_starrating_stats':
+            {
+                $ret = ezsrRatingObject::stats( $namedParameters['object_id'] );
             } break;
             case 'fetch_by_starrating':
             {
