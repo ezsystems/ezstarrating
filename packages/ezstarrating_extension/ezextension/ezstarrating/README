@@ -29,7 +29,8 @@ Follow these steps to add the eZ Star Rating module to your eZ publish installat
 
   3) Create table to store ratings
 
-       mysql -u[datbase_user] -p[database-password] [databasename] < extension/starrating/sql/mysql/mysql.sql
+       mysql -u[datbase_user] -p[database-password] [databasename] < extension/ezstarrating/sql/mysql/mysql.sql
+       There is also a sql file for postgressql in: extension/ezstarrating/sql/postgresql/postgresql.sql
 
   4) Clear Cache
 
