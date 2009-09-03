@@ -1,30 +1,27 @@
-Star Rating Module
-===========================
+eZ Star Rating extension for eZ Publish
+=======================================
 Star Rating is an extension that allows  the addition of a rating system
 your eZ publish content objects via a datatype.
 
-If the xajax module has been installed and the user has javascript enabled
-voting will occur via ajax calls.
-
-The extension has been designed with accessability in mind and will function
-without javascript, images or CSS.
+ezstarating have an dependancy on ezjscore, you'll find more info on it here:
+http://projects.ez.no/ezjscore
 
 The current version allows ratings between 1 and 5 stars and users can vote
 once per session.
 
-The Star Rating module contains images and CSS from Komodo media 
+The eZ Star Rating module contains images and CSS from Komodo media 
 http://komodomedia.com/blog/index.php/2007/01/20/css-star-rating-redux/#
 
 Installation
 -----------------
-Follow these steps to add the Star Rating module to your eZ publish installation:
+Follow these steps to add the eZ Star Rating module to your eZ publish installation:
 
   1) Extract the archive into the /extension directory
 
   2) Edit site.ini.append in /settings/override. Add the following to the file:
 
        [ExtensionSettings]
-       ActiveExtensions[]=starrating
+       ActiveExtensions[]=ezstarrating
 
      If you already have the [ExtensionSettings] block, just add the second line.
 
@@ -32,7 +29,7 @@ Follow these steps to add the Star Rating module to your eZ publish installation
 
   3) Create table to store ratings
 
-       mysql -u[datbase_user] -p[database-password] [databasename] < extension/starrating/sql/starrating.sql
+       mysql -u[datbase_user] -p[database-password] [databasename] < extension/starrating/sql/mysql/mysql.sql
 
   4) Clear Cache
 
