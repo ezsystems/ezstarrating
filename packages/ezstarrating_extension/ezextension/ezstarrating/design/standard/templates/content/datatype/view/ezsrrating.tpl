@@ -19,7 +19,7 @@
 {ezscript_require(array( 'ezjsc::yui3', 'ezjsc::yui3io') )}
 <script type="text/javascript">
 {literal}
-YUI( YUI3_config ).use('node', 'event', 'io-ez', 'ezsr-star-rating-css', function( Y )
+YUI( YUI3_config ).use('node', 'event', 'io-ez', function( Y )
 {
     Y.on( "domready", function( e )
     {
