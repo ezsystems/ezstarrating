@@ -12,4 +12,7 @@ Functions[]=ezstarrating
 PermissionPrFunction=enabled
 File=extension/ezstarrating/classes/ezsrserverfunctions.php
 
+[ezjscServer_ezstarratingtemplate]
+TemplateFunction=true
+
 */ ?>
