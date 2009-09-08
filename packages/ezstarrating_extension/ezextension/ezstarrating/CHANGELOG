@@ -10,7 +10,8 @@
   (refactored table structure to have one table for precomputed rating values for faster read)
 * Added sql script for Oracle DB
 * Ability to change your own rating afterwards (ini setting)
-* Added support for jQuery (yui3 / jquery selected by ezjscore.ini[eZJSCore]PreferredLibrary)
+* Added jQuery support as contributed by Carlos Revillo
+ (yui3 / jquery selected by ezjscore.ini[eZJSCore]PreferredLibrary)
 
 
 #v1.1  29 Jan 2008
