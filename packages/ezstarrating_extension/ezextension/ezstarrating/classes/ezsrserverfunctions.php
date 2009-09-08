@@ -69,11 +69,22 @@ class ezsrServerFunctions extends ezjscServerFunctions
                                                     'contentobject_attribute_id' =>  $ret['id'],
                                                     'rating' => $args[2]
         ));
-        if ( $rateDataObj->userHasRated() )
+
+        $proiorRating = $rateDataObj->userHasRated( true );
+        
+        if ( $proiorRating === true )
         {
             $ret['already_rated'] = true;
         }
-        else
+        else if ( $proiorRating instanceof ezsrRatingDataObject )
+        {
+            $rateDataObj = $proiorRating;
+            $rateDataObj->setAttribute( 'rating', $args[2] );
+            $ret['already_rated'] = true;
+            $proiorRating = false;
+        }
+
+        if ( !$proiorRating )
         {
         	$rateDataObj->store();
         	$avgRateObj = $rateDataObj->getAverageRating();

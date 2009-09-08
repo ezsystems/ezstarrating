@@ -11,27 +11,23 @@
 ({'%rating_count votes casted'|i18n('extension/ezstarrating/datatype', '', hash( '%rating_count', concat('<span id="ezsr_total_', $attribute.id, '">', $rating.rating_count|wash, '</span>') ))}) 
 <p id="ezsr_just_rated_{$attribute.id}" class="ezsr-just-rated hide">{'Thank you for rating!'|i18n('extension/ezstarrating/datatype', 'When rating')}</p>
 <p id="ezsr_has_rated_{$attribute.id}" class="ezsr-has-rated hide">{'You have already rated this page, you can only rate it once!'|i18n('extension/ezstarrating/datatype', 'When rating')}</p>
+<p id="ezsr_changed_rating_{$attribute.id}" class="ezsr-changed-rating hide">{'Your rating has been changed, thanks for rating!'|i18n('extension/ezstarrating/datatype', 'When rating')}</p>
 
 {run-once}
+{ezcss_require( 'star_rating.css' )}
+{if has_access_to_limitation( 'ezjscore', 'call', hash( 'FunctionList', 'ezstarrating_rate' ) )}
 {ezscript_require(array( 'ezjsc::yui3', 'ezjsc::yui3io') )}
 <script type="text/javascript">
 {literal}
-if ( YUI3_config.modules === undefined ) YUI3_config.modules = {};
-
-YUI3_config.modules['ezsr-star-rating-css'] = {
-    type: 'css',
-    fullpath: {/literal}{"stylesheets/star_rating.css"|ezdesign()}{literal}
-};
-
 YUI( YUI3_config ).use('node', 'event', 'io-ez', 'ezsr-star-rating-css', function( Y )
 {
-{/literal}
-{if has_access_to_limitation( 'ezjscore', 'call', hash( 'FunctionList', 'ezstarrating_rate' ) )}
-{literal}
     Y.on( "domready", function( e )
     {
-        Y.all('ul.ezsr-star-rating').addClass('ezsr-star-rating-enabled');
-        Y.all('ul.ezsr-star-rating li a').on( 'click', _rate );
+        Y.all('ul.ezsr-star-rating').each( function( node ){
+            if ( !node.hasClass('ezsr-star-rating-disabled') )
+            	   node.addClass('ezsr-star-rating-enabled')
+        } );
+        Y.all('ul.ezsr-star-rating-enabled li a').on( 'click', _rate );
     });
 
     function _rate( e )
@@ -50,7 +46,10 @@ YUI( YUI3_config ).use('node', 'event', 'io-ez', 'ezsr-star-rating-css', functio
             var data = o.responseJSON.content;
             if ( data.rated  )
             {
-                Y.all('#ezsr_just_rated_' + data.id).removeClass('hide');
+                if ( data.already_rated )
+                	Y.all('#ezsr_changed_rating_' + data.id).removeClass('hide');
+                else
+                    Y.all('#ezsr_just_rated_' + data.id).removeClass('hide');
                 Y.all('#ezsr_rating_percent_' + data.id).setStyle('width', (( data.stats.rounded_average / 5 ) * 100 ) + '%' );
                 Y.all('#ezsr_average_' + data.id).setContent( data.stats.rounded_average );
                 Y.all('#ezsr_total_' + data.id).setContent( data.stats.rating_count );
@@ -66,9 +65,9 @@ YUI( YUI3_config ).use('node', 'event', 'io-ez', 'ezsr-star-rating-css', functio
             alert( o.responseJSON.error_text );
         }
     }
+});
 {/literal}
-{/if}
-{rdelim});
 </script>
+{/if}
 {/run-once}
 {undef $rating}

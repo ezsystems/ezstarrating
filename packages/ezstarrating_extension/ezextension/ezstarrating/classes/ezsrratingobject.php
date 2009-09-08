@@ -62,7 +62,8 @@ class ezsrRatingObject extends eZPersistentObject
                   'keys' => array( 'contentobject_id', 'contentobject_attribute_id' ),
                   'function_attributes' => array(
                       'rounded_average' => 'getRoundedAverage',
-                      'rating_data' => 'getRatingData'
+                      'rating_data' => 'getRatingData',
+                      'current_user_has_rated' => 'currentUserHasRated',
                   ),
                   'class_name' => 'ezsrRatingObject',
                   'name' => 'ezstarrating' );
@@ -89,6 +90,19 @@ class ezsrRatingObject extends eZPersistentObject
     function getRatingData()
     {
         return ezsrRatingDataObject::fetchByObjectId( $this->attribute('contentobject_id'), $this->attribute('contentobject_attribute_id') );
+    }
+
+    /**
+     * Check if current user has rated on this content attribute or not!
+     * 
+     * @return bool
+     */
+    function currentUserHasRated()
+    {
+        $rateDataObj = ezsrRatingDataObject::create( array( 'contentobject_id' => $this->attribute('contentobject_id'),
+                                                            'contentobject_attribute_id' =>  $this->attribute('contentobject_attribute_id'),
+                                                            'created_at' => 0 ) );
+        return $rateDataObj->userHasRated();
     }
 
     /**

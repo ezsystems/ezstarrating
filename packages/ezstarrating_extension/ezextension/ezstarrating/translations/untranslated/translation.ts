@@ -32,5 +32,10 @@
         <comment>When rating</comment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Your rating has been changed, thanks for rating</source>
+        <comment>When rating</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

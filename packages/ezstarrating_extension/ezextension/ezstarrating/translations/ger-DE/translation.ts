@@ -35,5 +35,10 @@
         <comment>When rating</comment>
         <translation>Sie haben bereits diese Seite bewertet, sie können nur eine Stimme abgeben!</translation>
     </message>
+    <message>
+        <source>Your rating has been changed, thanks for rating</source>
+        <comment>When rating</comment>
+        <translation>Ihre Bewertung wurde geändert. Vielen Dank für Ihre Bewertung!</translation>
+    </message>
 </context>
 </TS>

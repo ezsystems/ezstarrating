@@ -83,8 +83,7 @@ class ezsrRatingDataObject extends eZPersistentObject
                   ),
                   'keys' => array( 'id' ),
                   'function_attributes' => array(
-                      'average_rating' => 'getAverageRating',
-                      //'has_rated' => 'userHasRated', (pr user: as in not cache safe)
+                      'average_rating' => 'getAverageRating'
                   ),
                   'increment_key' => 'id',
                   'class_name' => 'ezsrRatingDataObject',
@@ -116,11 +115,10 @@ class ezsrRatingDataObject extends eZPersistentObject
      * 2a. (annonymus user) check against session key
      * 2b. (logged in user) check against user id
      * 
-     * @param int $contentobjecrId
-     * @param int $contentobjectAttributeId (optional, check only by object id if set to 0)
+     * @param bool $returnRatedObject Return object if user has rated and [eZStarRating]AllowChangeRating=enabled
      * @return bool
      */
-    function userHasRated()
+    function userHasRated( $returnRatedObject = false )
     {
         if ( $this->currentUserHasRated === null )
         {
@@ -137,7 +135,9 @@ class ezsrRatingDataObject extends eZPersistentObject
             {
             	$this->currentUserHasRated = true;
             }
-            else
+
+            $returnRatedObject = $returnRatedObject && $ini->variable( 'eZStarRating', 'AllowChangeRating' ) === 'enabled';
+            if ( $this->currentUserHasRated === null || $returnRatedObject )
             {
                 $sessionKey = $this->attribute('session_key');
                 $userId = $this->attribute('user_id');
@@ -154,7 +154,17 @@ class ezsrRatingDataObject extends eZPersistentObject
                                    'contentobject_id' => $this->attribute('contentobject_id'), // for table index
                                    'contentobject_attribute_id' => $contentobjectAttributeId );
                 }
-                $this->currentUserHasRated = eZPersistentObject::count( self::definition(), $cond, 'id' ) != 0;
+
+                if ( $returnRatedObject )
+                {
+                    $this->currentUserHasRated = eZPersistentObject::fetchObject( self::definition(), null, $cond );
+                    if ( $this->currentUserHasRated === null)
+                        $this->currentUserHasRated = false;
+                }
+                else
+                {
+                    $this->currentUserHasRated = eZPersistentObject::count( self::definition(), $cond, 'id' ) != 0;
+                }
             }
         }    	
         return $this->currentUserHasRated;

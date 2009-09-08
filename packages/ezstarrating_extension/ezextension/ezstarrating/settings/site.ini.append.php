@@ -11,5 +11,8 @@ ExtensionAutoloadPath[]=ezstarrating
 # attribute in a session variable (witch is kept even if you login/out)
 UseUserSession=enabled
 
+# Allows the user to change his rating after he has rated by returning to the page and rate again
+AllowChangeRating=enabled
+
 
 */ ?>
