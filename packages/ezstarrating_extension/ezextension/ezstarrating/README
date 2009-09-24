@@ -36,6 +36,12 @@ Follow these steps to add the eZ Star Rating module to your eZ publish installat
 
   4) Clear Cache
 
+  5) Set up user permissions
+
+	   For the user roles that are allowed to vote, add in the "roles and policies"
+       page in the administration interfacea policy on module "ezjscore", function
+       "call", with limitation "ezstarrating_rate"
+     
 Usage
 ----------------
 To use, simply add a Star Rating attribute to the content class you want to be rated.
