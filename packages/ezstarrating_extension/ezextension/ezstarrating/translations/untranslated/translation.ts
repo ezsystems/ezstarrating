@@ -19,7 +19,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%rating_count votes casted</source>
+        <source>%rating_count votes cast</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

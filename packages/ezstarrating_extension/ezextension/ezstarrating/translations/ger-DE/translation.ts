@@ -22,7 +22,7 @@
         <translation>Bewertung: %current_rating/5</translation>
     </message>
     <message>
-        <source>%rating_count votes casted</source>
+        <source>%rating_count votes cast</source>
         <translation>%rating_count Stimmen gezählt</translation>
     </message>
     <message>
