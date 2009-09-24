@@ -1,4 +1,4 @@
-# v2.0.0  8 Sept 2009
+# v2.0.0  29 Sept 2009
 * Removed references for full 4.x compatability
 * Changed from xajax to ezjscore + yui3 for ajax calls
 * Merged rating code from ezcore / ezyui
