@@ -7,7 +7,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Currently %current_rating og 5 Stars.</source>
+        <source>Currently %current_rating out of 5 Stars.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

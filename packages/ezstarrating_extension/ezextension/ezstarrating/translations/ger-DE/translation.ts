@@ -10,7 +10,7 @@
         <translation>Bewertung mit Sternen</translation>
     </message>
     <message>
-        <source>Currently %current_rating og 5 Stars.</source>
+        <source>Currently %current_rating out of 5 Stars.</source>
         <translation>Derzeit %current_rating von 5 Sternen.</translation>
     </message>
     <message>
