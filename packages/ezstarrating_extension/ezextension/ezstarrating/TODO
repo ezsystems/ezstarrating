@@ -1,3 +1,5 @@
-+ Set max rating in datatype (class or content?)
-+ Ability to clear ratings from datatype
-+ Stats
++ Set max rating and interval in datatype (on content class attribute?)
++ Support for like / don't like (will need count attributes for how many have given top rating and lowest rating)
++ Ability to clear ratings from datatype (edit view?)
++ More stats
++ Versioned rating?

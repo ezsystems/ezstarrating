@@ -32,7 +32,7 @@
                 else
                     $('#ezsr_just_rated_' + data.content.id).removeClass('hide');
                 $('#ezsr_rating_percent_' + data.content.id).css('width', (( data.content.stats.rounded_average / 5 ) * 100 ) + '%' );
-                $('#ezsr_average_' + data.content.id).text( data.content.stats.rounded_average );
+                $('#ezsr_average_' + data.content.id).text( data.content.stats.rating_average );
                 $('#ezsr_total_' + data.content.id).text( data.content.stats.rating_count );
             }
             else if ( data.content.already_rated )

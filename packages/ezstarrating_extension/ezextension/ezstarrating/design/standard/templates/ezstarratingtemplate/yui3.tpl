@@ -31,7 +31,7 @@ YUI( YUI3_config ).use('node', 'event', 'io-ez', function( Y )
                 else
                     Y.all('#ezsr_just_rated_' + data.id).removeClass('hide');
                 Y.all('#ezsr_rating_percent_' + data.id).setStyle('width', (( data.stats.rounded_average / 5 ) * 100 ) + '%' );
-                Y.all('#ezsr_average_' + data.id).setContent( data.stats.rounded_average );
+                Y.all('#ezsr_average_' + data.id).setContent( data.stats.rating_average );
                 Y.all('#ezsr_total_' + data.id).setContent( data.stats.rating_count );
             }
             else if ( data.already_rated  )

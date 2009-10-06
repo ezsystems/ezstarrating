@@ -1,22 +1,25 @@
+# v2.1.0alpha1
+- Use more accurate $rating.rating_average instead of rounded_avrage in templates
+
 # v2.0.0  29 Sept 2009
-* Removed references for full 4.x compatability
-* Changed from xajax to ezjscore + yui3 for ajax calls
-* Merged rating code from ezcore / ezyui
-* Code cleanup (cs & phpdoc and code name conventions)
-* Load css with YUI.Loader
-* fetch operator 'fetch_by_starrating' that works almost like list/tree fetch (see ezsrRatingObject::fetchNodeByRating)
-* fetch operator 'ezsrrating' to fetch rating data by conditions ( contentobject_id/contentobject_attribute_id/user_id/session_key )
-* Fixed #15370: Fix scalebilty of ezstartrating before release! 
+- Removed references for full 4.x compatibility
+- Changed from xajax to ezjscore + yui3 for ajax calls
+- Merged rating code from ezcore / ezyui
+- Code cleanup (cs & phpdoc and code name conventions)
+- Load css with YUI.Loader
+- Added fetch operator 'fetch_by_starrating' that works almost like list/tree fetch (see ezsrRatingObject::fetchNodeByRating)
+- Added fetch operator 'ezsrrating' to fetch rating data by conditions ( contentobject_id/contentobject_attribute_id/user_id/session_key )
+- Fixed #15370: Fix scalebilty of ezstartrating before release! 
   (refactored table structure to have one table for precomputed rating values for faster read)
-* Added sql script for Oracle DB
-* Ability to change your own rating afterwards (ini setting)
-* Added jQuery support as contributed by Carlos Revillo
+- Added sql script for Oracle DB
+- Ability to change your own rating afterwards by rating again (ini setting)
+- Added jQuery support as contributed by Carlos Revillo
  (yui3 / jquery selected by ezjscore.ini[eZJSCore]PreferredLibrary)
 
 
 #v1.1  29 Jan 2008
-+ added ability to have different keys per domain
-+ added ability to set permissions to bypass captcha
+- Added ability to have different keys per domain
+- Added ability to set permissions to bypass captcha
 
 # v1.0  4 Jan 2008
-Initial version
+- Initial version
