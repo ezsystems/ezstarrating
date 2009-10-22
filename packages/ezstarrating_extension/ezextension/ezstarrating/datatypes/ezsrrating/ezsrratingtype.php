@@ -3,7 +3,7 @@
 // Definition of ezsrRatingType class
 //
 // SOFTWARE NAME: eZ Star Rating
-// SOFTWARE RELEASE: 2.0
+// SOFTWARE RELEASE: 2.x
 // COPYRIGHT NOTICE: Copyright (C) 2008 Bruce Morrison, 2009 eZ Systems AS
 // SOFTWARE LICENSE: GNU General Public License v2.0
 // NOTICE: >
