@@ -25,7 +25,7 @@
         {* Prefer jQuery if something else is used globally, since it's smaller then yui3. *}
         {set $preferred_lib = 'jquery'}
     {/if}
-    {ezscript_require( array( concat( 'ezjsc::', $preferred_lib ), concat( 'ezjsc::', $preferred_lib, 'io' ), concat( 'ezstarratingtemplate::', $preferred_lib ) ) )}
+    {ezscript_require( array( concat( 'ezjsc::', $preferred_lib ), concat( 'ezjsc::', $preferred_lib, 'io' ), concat( 'ezstarrating_', $preferred_lib, '.js' ) ) )}
 {/if}
 {/run-once}
 {undef $rating}
