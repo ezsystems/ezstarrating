@@ -54,13 +54,20 @@ class ezsrServerFunctions extends ezjscServerFunctions
         if ( class_exists( 'eZSession' ) && eZSession::userHasSessionCookie() !== true )
             return $ret;
 
+        // Return if parameters are not valid attribute id + version numbers
         $contentobjectAttribute = eZContentObjectAttribute::fetch( $ret['id'], $args[1] );
         if ( !$contentobjectAttribute instanceof eZContentObjectAttribute )
             return $ret;
 
+        // Return if attribute is not a rating attribute
         if ( $contentobjectAttribute->attribute('data_type_string') !== ezsrRatingType::DATA_TYPE_STRING )
             return $ret;
 
+        // Return if rating has been disabled on current attribute
+        if ( $contentobjectAttribute->attribute('data_int') )
+            return $ret;
+
+        // Return if user does not have access to object
         $contentobject = $contentobjectAttribute->attribute('object');
         if ( !$contentobject instanceof eZContentObject || !$contentobject->attribute('can_read') )
             return $ret;
@@ -81,7 +88,7 @@ class ezsrServerFunctions extends ezjscServerFunctions
             $rateDataObj = $proiorRating;
             $rateDataObj->setAttribute( 'rating', $args[2] );
             $ret['already_rated'] = true;
-            $proiorRating = false;
+            $proiorRating = false;// just to reuse code bellow
         }
 
         if ( !$proiorRating )

@@ -40,25 +40,27 @@ class ezsrRatingType extends eZDataType
       Validates the input and returns true if the input was
       valid for this datatype.
     */
-    function validateObjectAttributeHTTPInput( $http, $base, $objectAttribute )
+    function validateObjectAttributeHTTPInput( $http, $base, $contentObjectAttribute )
     {
         return eZInputValidator::STATE_ACCEPTED;
     }
 
-    function deleteStoredObjectAttribute( $objectAttribute, $version = null )
+    function deleteStoredObjectAttribute( $contentObjectAttribute, $version = null )
     {
       // Remove all ratings associated with thes objectAttribute;
-      if ($version == null)
+      if ( $version == null )
       {
-          ezsrRatingObject::removeByObjectId( $objectAttribute->attribute('contentobject_id'), $objectAttribute->attribute('id') );
-          ezsrRatingDataObject::removeByObjectId( $objectAttribute->attribute('contentobject_id'), $objectAttribute->attribute('id') );
+          ezsrRatingObject::removeByObjectId( $contentObjectAttribute->attribute('contentobject_id'), $contentObjectAttribute->attribute('id') );
+          ezsrRatingDataObject::removeByObjectId( $contentObjectAttribute->attribute('contentobject_id'), $contentObjectAttribute->attribute('id') );
       }
     }
 
     /*!
     */
-    function fetchObjectAttributeHTTPInput( $http, $base, $objectAttribute )
+    function fetchObjectAttributeHTTPInput( $http, $base, $contentObjectAttribute )
     {
+        // Use data_int for storing 'disabled' flag
+        $contentObjectAttribute->setAttribute( 'data_int', $http->hasPostVariable( $base . '_data_srrating_disabled_' . $contentObjectAttribute->attribute( 'id' ) ) );
         return true;
     }
 
@@ -66,25 +68,25 @@ class ezsrRatingType extends eZDataType
      Store the content. Since the content has been stored in function 
      fetchObjectAttributeHTTPInput(), this function is with empty code.
     */
-    function storeObjectAttribute( $objectattribute )
+    function storeObjectAttribute( $contentObjectAttribute )
     {
     }
 
     /*!
      Returns the meta data used for storing search indices.
     */
-    function metaData( $objectAttribute )
+    function metaData( $contentObjectAttribute )
     {
-        $ratingObj = $objectAttribute->attribute( 'content' );
+        $ratingObj = $contentObjectAttribute->attribute( 'content' );
         return $ratingObj instanceof ezsrRatingObject ? $ratingObj->attribute('rating_count') > 0 : '';
     }
 
     /*!
      Returns the text.
     */
-    function title( $objectAttribute, $name = null)
+    function title( $contentObjectAttribute, $name = null)
     {
-        return $this->metaData( $objectAttribute );
+        return $this->metaData( $contentObjectAttribute );
     }
 
     function isIndexable()
@@ -92,9 +94,9 @@ class ezsrRatingType extends eZDataType
         return true;
     }
 
-    function sortKey( $objectAttribute )
+    function sortKey( $contentObjectAttribute )
     {
-        return $this->metaData( $objectAttribute );
+        return $this->metaData( $contentObjectAttribute );
     }
   
     function sortKeyType()
@@ -102,19 +104,19 @@ class ezsrRatingType extends eZDataType
         return 'integer';
     }
 
-    function hasObjectAttributeContent( $objectAttribute )
+    function hasObjectAttributeContent( $contentObjectAttribute )
     {
-        $ratingObj = $objectAttribute->attribute( 'content' );
+        $ratingObj = $contentObjectAttribute->attribute( 'content' );
         return $ratingObj instanceof ezsrRatingObject ? $ratingObj->attribute('rating_count') > 0 : false;
     }
 
     /*!
      Returns the content.
     */
-    function objectAttributeContent( $objectAttribute )
+    function objectAttributeContent( $contentObjectAttribute )
     {
-        $objectId = $objectAttribute->attribute('contentobject_id');
-        $attributeId = $objectAttribute->attribute('id');
+        $objectId = $contentObjectAttribute->attribute('contentobject_id');
+        $attributeId = $contentObjectAttribute->attribute('id');
         $ratingObj = null;
         if ( $objectId && $attributeId )
         {

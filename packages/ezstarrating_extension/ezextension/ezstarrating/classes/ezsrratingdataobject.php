@@ -116,7 +116,7 @@ class ezsrRatingDataObject extends eZPersistentObject
      * 2b. (logged in user) check against user id
      * 
      * @param bool $returnRatedObject Return object if user has rated and [eZStarRating]AllowChangeRating=enabled
-     * @return bool
+     * @return bool|ezsrRatingDataObject
      */
     function userHasRated( $returnRatedObject = false )
     {

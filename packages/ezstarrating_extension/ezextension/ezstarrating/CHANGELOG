@@ -1,6 +1,7 @@
 # v2.1.0alpha1
 - Use more accurate $rating.rating_average instead of rounded_avrage in templates
 - Move starrating javascript code to javascript/ezstarrating_<lib>.js instead of using templates
+- Make it possible to disable rating pr attribute
 
 # v2.0.0  29 Sept 2009
 - Removed references for full 4.x compatibility
