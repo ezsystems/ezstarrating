@@ -21,8 +21,8 @@
 {* Enable rating code if not disabled on attribute and user has access to rate! *}
 {if and( $attribute.data_int|not, has_access_to_limitation( 'ezjscore', 'call', hash( 'FunctionList', 'ezstarrating_rate' ) ))}
     {*
-       eZStarRating supports both yui3.0 and jQuery as decieded by ezjscore.ini[eZJSCore]PreferredLibrary
-       Look in design/standard/templates/ezstaratingtemplate/* for the js code! 
+       eZStarRating supports both yui3.0 and jQuery as decided by ezjscore.ini[eZJSCore]PreferredLibrary
+       Look in design/standard/jsvascript/ezstarrating_*.js for the JavaScript code! 
     *}
     {def $preferred_lib = ezini('eZJSCore', 'PreferredLibrary', 'ezjscore.ini')}
     {if array( 'yui3', 'jquery' )|contains( $preferred_lib )|not()}
