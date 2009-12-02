@@ -22,7 +22,9 @@
 {if and( $attribute.data_int|not, has_access_to_limitation( 'ezjscore', 'call', hash( 'FunctionList', 'ezstarrating_rate' ) ))}
     {*
        eZStarRating supports both yui3.0 and jQuery as decided by ezjscore.ini[eZJSCore]PreferredLibrary
-       Look in design/standard/jsvascript/ezstarrating_*.js for the JavaScript code! 
+       For the JavaScript code look in: design/standard/javascript/ezstarrating_*.js
+
+       (This dual approach is not something you need to do in your extensions, but currently a service done on official extensions for now!)
     *}
     {def $preferred_lib = ezini('eZJSCore', 'PreferredLibrary', 'ezjscore.ini')}
     {if array( 'yui3', 'jquery' )|contains( $preferred_lib )|not()}
