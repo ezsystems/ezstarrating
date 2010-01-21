@@ -40,5 +40,13 @@
         <comment>When rating</comment>
         <translation>Ihre Bewertung wurde geändert. Vielen Dank für Ihre Bewertung!</translation>
     </message>
+    <message>
+        <source>%login_link_startLog in%login_link_end or %create_link_startcreate a user account%create_link_end to rate this page.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%login_link_startLog in%login_link_end to rate this page.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>
