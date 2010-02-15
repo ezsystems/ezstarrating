@@ -27,7 +27,7 @@
  * Only to be used by {@link ezsrRatingObject::fetchNodeByRating()}
  * As other fetch functions won't have the needed rating values in the returned data.
  * 
- * @author André R.
+ * @author Andrï¿½ R.
  *
  */
 
@@ -82,7 +82,7 @@ class ezsrRatingObjectTreeNode extends eZContentObjectTreeNode
             if( $node['node_id'] == 1 )
             {
                 if( !isset( $node['name'] ) || !$node['name'] )
-                    $node['name'] = ezi18n( 'kernel/content', 'Top Level Nodes' );
+                    $node['name'] = eZi18n::translate( 'kernel/content', 'Top Level Nodes' );
             }
 
             $object = new self( $node );

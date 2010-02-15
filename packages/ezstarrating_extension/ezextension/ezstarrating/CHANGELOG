@@ -2,6 +2,7 @@
 - Use more accurate $rating.rating_average instead of rounded_avrage in templates
 - Move starrating javascript code to javascript/ezstarrating_<lib>.js instead of using templates
 - Make it possible to disable rating pr attribute
+- Fixed bug #16160: Call to undefined function ezi18n()
 
 # v2.0.0  29 Sept 2009
 - Removed references for full 4.x compatibility
