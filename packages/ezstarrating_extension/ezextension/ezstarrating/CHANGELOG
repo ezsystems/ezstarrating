@@ -1,3 +1,6 @@
+# v2.1.0rc1
+- Fixed #16264: bad index naming in oracle
+
 # v2.1.0alpha1
 - Use more accurate $rating.rating_average instead of rounded_avrage in templates
 - Move starrating javascript code to javascript/ezstarrating_<lib>.js instead of using templates
