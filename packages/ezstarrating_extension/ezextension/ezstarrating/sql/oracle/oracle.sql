@@ -11,7 +11,7 @@ CREATE TABLE ezstarrating_data (
   PRIMARY KEY(id)
 );
 
-CREATE INDEX ezsr_data_user_id_session_key ON ezstarrating_data (user_id, session_key);
+CREATE INDEX user_id_session_key ON ezstarrating_data (user_id, session_key);
 CREATE INDEX ezsr_data_cobj_id_cobj_att_id ON ezstarrating_data (contentobject_id, contentobject_attribute_id);
 
 CREATE TABLE ezstarrating (
