@@ -27,7 +27,7 @@
         var args = $(this).attr('id').split('_');
         $('#ezsr_rating_' + args[1]).removeClass('ezsr-star-rating-enabled');
         $('li a', '#ezsr_rating_' + args[1]).unbind( 'click' );
-        jQuery.ez( 'ezstarrating::rate::' + args[1] + '::' + args[2] + '::' + args[3], _callBack );
+        jQuery.ez( 'ezstarrating::rate::' + args[1] + '::' + args[2] + '::' + args[3], {}, _callBack );
         return false;
     }
 
