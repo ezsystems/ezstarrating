@@ -1,10 +1,10 @@
-﻿<?php
+<?php
 //
 // Definition of ezsrTemplateOperators class
 //
 // SOFTWARE NAME: eZ Star Rating
 // SOFTWARE RELEASE: 2.x
-// COPYRIGHT NOTICE: Copyright (C) 2008 Bruce Morrison, 2009 eZ Systems AS
+// COPYRIGHT NOTICE: Copyright (C) 2008 Bruce Morrison, 2009-2010 eZ Systems AS
 // SOFTWARE LICENSE: GNU General Public License v2.0
 // NOTICE: >
 //   This program is free software; you can redistribute it and/or
