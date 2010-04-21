@@ -1,3 +1,6 @@
+# v2.?.?
+- Fixed: renamed extendedattributefiler.ini to .ini.append.php, as it is the correct name
+
 # v2.1.0rc1
 - Fixed #16264: bad index naming in oracle
 
