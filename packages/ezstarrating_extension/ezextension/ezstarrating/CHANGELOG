@@ -1,4 +1,5 @@
 # v2.?.?
+- Added extension.xml. Replaces ezinfo.php and loading.php starting from ezpublish 4.4.
 - Fixed: renamed extendedattributefiler.ini to .ini.append.php, as it is the correct name
 
 # v2.1.0rc1
@@ -17,7 +18,7 @@
 - Load css with YUI.Loader
 - Added fetch operator 'fetch_by_starrating' that works almost like list/tree fetch (see ezsrRatingObject::fetchNodeByRating)
 - Added fetch operator 'ezsrrating' to fetch rating data by conditions ( contentobject_id/contentobject_attribute_id/user_id/session_key )
-- Fixed #15370: Fix scalebilty of ezstartrating before release! 
+- Fixed #15370: Fix scalebilty of ezstartrating before release!
   (refactored table structure to have one table for precomputed rating values for faster read)
 - Added sql script for Oracle DB
 - Ability to change your own rating afterwards by rating again (ini setting)
