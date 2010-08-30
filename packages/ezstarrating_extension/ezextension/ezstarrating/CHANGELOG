@@ -1,6 +1,7 @@
 # v2.?.?
 - Added extension.xml. Replaces ezinfo.php and loading.php starting from ezpublish 4.4.
 - Fixed: renamed extendedattributefiler.ini to .ini.append.php, as it is the correct name
+- Fixed bug #016812: ezstarrating missing serializeContentClassAttribute definition
 
 # v2.1.0rc1
 - Fixed #16264: bad index naming in oracle
