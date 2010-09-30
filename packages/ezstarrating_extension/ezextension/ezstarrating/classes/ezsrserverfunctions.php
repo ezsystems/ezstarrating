@@ -45,7 +45,7 @@ class ezsrServerFunctions extends ezjscServerFunctions
         $ret = array( 'id' => 0, 'rated' => false, 'already_rated' => false, 'stats' => false );
         if ( isset( $args[0] ) )
             $ret['id'] = $args[0];
-            
+
         if ( !isset( $args[2] ) || !is_numeric( $args[0] ) || !is_numeric( $args[1] ) || !is_numeric( $args[2] ) || $args[2] > 5 || $args[2] < 1 )
             return $ret;
 
@@ -78,7 +78,7 @@ class ezsrServerFunctions extends ezjscServerFunctions
         ));
 
         $proiorRating = $rateDataObj->userHasRated( true );
-        
+
         if ( $proiorRating === true )
         {
             $ret['already_rated'] = true;
@@ -93,17 +93,17 @@ class ezsrServerFunctions extends ezjscServerFunctions
 
         if ( !$proiorRating )
         {
-        	$rateDataObj->store();
-        	$avgRateObj = $rateDataObj->getAverageRating();
-        	$avgRateObj->updateFromRatingData();
+            $rateDataObj->store();
+            $avgRateObj = $rateDataObj->getAverageRating();
+            $avgRateObj->updateFromRatingData();
             $avgRateObj->store();
-        	eZContentCacheManager::clearContentCacheIfNeeded( $rateDataObj->attribute('contentobject_id') );
-        	$ret['rated'] = true;
-        	$ret['stats'] = array(
-        	   'rating_count' => $avgRateObj->attribute('rating_count'),
-        	   'rating_average' => $avgRateObj->attribute('rating_average'),
-        	   'rounded_average' => $avgRateObj->attribute('rounded_average'),
-        	);
+            eZContentCacheManager::clearContentCacheIfNeeded( $rateDataObj->attribute('contentobject_id') );
+            $ret['rated'] = true;
+            $ret['stats'] = array(
+               'rating_count' => $avgRateObj->attribute('rating_count'),
+               'rating_average' => $avgRateObj->attribute('rating_average'),
+               'rounded_average' => $avgRateObj->attribute('rounded_average'),
+            );
         }
         return $ret;
     }
