@@ -33,7 +33,7 @@ class ezsrRatingType extends eZDataType
     */
     function __construct()
     {
-        parent::__construct( self::DATA_TYPE_STRING, ezi18n( 'extension/ezstarrating/datatype', 'Star Rating', 'Datatype name' ), array( 'serialize_supported' => true ) );
+        parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'extension/ezstarrating/datatype', 'Star Rating', 'Datatype name' ), array( 'serialize_supported' => true ) );
     }
 
     /*!
