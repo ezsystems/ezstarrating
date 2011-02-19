@@ -30,10 +30,10 @@ class eZStarRatingInfo
     {
         return array(
             'Name' => '<a href="http://projects.ez.no/ezstarrating">eZ Star Rating</a> extension',
-            'Version' => '1.2.0',
+            'Version' => '//autogentag//',
             'Author' => "<a href='http://www.stuffandcontent.com'>Bruce Morrison</a> & André R.",
             'Copyright' => "Copyright (C) 2008 Bruce Morrison, 1999-2010 eZ Systems AS",
-            'License' => 'GNU General Public License v2.0',
+            'License' => '//EZP_LICENSE//',
         );
     }
 }
