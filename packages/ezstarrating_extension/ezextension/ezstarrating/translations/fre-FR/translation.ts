@@ -62,7 +62,7 @@
     </message>
     <message>
         <source>You don&apos;t have access to rate this page.</source>
-        <translation>Vous n'avez pas le droit de noter cette page.</translation>
+        <translation>Vous n&apos;avez pas le droit de noter cette page.</translation>
     </message>
 </context>
 <context>

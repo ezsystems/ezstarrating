@@ -1,4 +1,6 @@
-<!DOCTYPE TS><TS>
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.0">
 <context>
     <name>extension/ezstarrating/datatype</name>
     <message>
@@ -52,6 +54,10 @@
     <message>
         <source>%login_link_startLog in%login_link_end to rate this page.</source>
         <translation>%login_link_startConnecta%login_link_end per valorar aquesta pàgina.</translation>
+    </message>
+    <message>
+        <source>You don&apos;t have access to rate this page.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
