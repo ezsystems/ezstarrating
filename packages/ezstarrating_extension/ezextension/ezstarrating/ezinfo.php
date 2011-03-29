@@ -33,7 +33,7 @@ class eZStarRatingInfo
             'Version' => '//autogentag//',
             'Author' => "<a href='http://www.stuffandcontent.com'>Bruce Morrison</a> & André R.",
             'Copyright' => "Copyright (C) 2008 Bruce Morrison, 1999-2010 eZ Systems AS",
-            'License' => '//EZP_LICENSE//',
+            'License' => 'GNU General Public License v2.0',
         );
     }
 }
