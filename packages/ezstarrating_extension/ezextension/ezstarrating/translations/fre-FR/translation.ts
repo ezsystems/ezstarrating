@@ -22,7 +22,7 @@
     </message>
     <message>
         <source>%rating_count votes cast</source>
-        <translation>%rating_count notes attribuées</translation>
+        <translation>%rating_count note(s) attribuée(s)</translation>
     </message>
     <message>
         <source>Thank you for rating!</source>
