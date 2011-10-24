@@ -54,8 +54,7 @@
     </message>
     <message>
         <source>%login_link_startLog in%login_link_end or %create_link_startcreate a user account%create_link_end to rate this page.</source>
-        <translatorcomment>%login_link_startLog in%login_link_end of %create_link_startmaak een account aan%create_link_end om deze pagina te waarderen.</translatorcomment>
-        <translation></translation>
+        <translation>%login_link_startLog in%login_link_end of %create_link_startmaak een account aan%create_link_end om deze pagina te waarderen.</translation>
     </message>
     <message>
         <source>%login_link_startLog in%login_link_end to rate this page.</source>
