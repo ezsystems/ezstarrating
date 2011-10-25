@@ -18,8 +18,8 @@ CREATE TABLE ezstarrating_data (
 ALTER TABLE ONLY ezstarrating_data
     ADD CONSTRAINT ezstarrating_data_pkey PRIMARY KEY (id);
 
-CREATE INDEX ezsr_data_user_id_session_key ON ezstarrating_data USING btree (user_id, session_key);
-CREATE INDEX ezsr_data_contentobject_id_contentobject_attribute_id ON ezstarrating_data USING btree (contentobject_id, contentobject_attribute_id);
+CREATE INDEX user_id_session_key ON ezstarrating_data USING btree (user_id, session_key);
+CREATE INDEX contentobject_id_contentobject_attribute_id ON ezstarrating_data USING btree (contentobject_id, contentobject_attribute_id);
 
 CREATE TABLE ezstarrating (
   contentobject_id integer DEFAULT 0 NOT NULL,
