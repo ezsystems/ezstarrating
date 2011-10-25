@@ -1,16 +1,24 @@
-{def $rating = $attribute.content}
+{def $rating = $attribute.content
+     $can_view_results = fetch( 'user', 'has_access_to', hash( 'module', 'starrating',
+                                                               'function', 'view_results' ) )
+     $current_rating = $rating.rounded_average|div(5)|mul(100)}
+
+{if $can_view_results|not}
+    {set $current_rating = 0}
+{/if}
 
 <ul id="ezsr_rating_{$attribute.id}" class="ezsr-star-rating">
-   <li id="ezsr_rating_percent_{$attribute.id}" class="ezsr-current-rating" style="width:{$rating.rounded_average|div(5)|mul(100)}%;">{'Currently %current_rating out of 5 Stars.'|i18n('extension/ezstarrating/datatype', '', hash( '%current_rating', concat('<span>', $rating.rounded_average|wash, '</span>') ))}</li>
+   <li id="ezsr_rating_percent_{$attribute.id}" class="ezsr-current-rating" style="width:{$current_rating}%;">{'Currently %current_rating out of 5 Stars.'|i18n('extension/ezstarrating/datatype', '', hash( '%current_rating', concat('<span>', $current_rating|wash, '</span>') ))}</li>
    {for 1 to 5 as $num}
        <li><a href="JavaScript:void(0);" id="ezsr_{$attribute.id}_{$attribute.version}_{$num}" title="{'Rate %rating stars out of 5'|i18n('extension/ezstarrating/datatype', '', hash( '%rating', $num ))}" class="ezsr-stars-{$num}" rel="nofollow" onfocus="this.blur();">{$num}</a></li>
    {/for}
 </ul>
 
-{'Rating: %current_rating/5'|i18n('extension/ezstarrating/datatype', '', hash( '%current_rating', concat('<span id="ezsr_average_', $attribute.id, '" class="ezsr-average-rating">', $rating.rating_average|wash, '</span>') ))}
-({'%rating_count votes cast'|i18n('extension/ezstarrating/datatype', '', hash( '%rating_count', concat('<span id="ezsr_total_', $attribute.id, '">', $rating.rating_count|wash, '</span>') ))})
- {if $attribute.data_int} {'disabled'|i18n('extension/ezstarrating/datatype')}.{/if}
-
+{if $can_view_results}
+    {'Rating: %current_rating/5'|i18n('extension/ezstarrating/datatype', '', hash( '%current_rating', concat('<span id="ezsr_average_', $attribute.id, '" class="ezsr-average-rating">', $rating.rating_average|wash, '</span>') ))}
+    ({'%rating_count votes cast'|i18n('extension/ezstarrating/datatype', '', hash( '%rating_count', concat('<span id="ezsr_total_', $attribute.id, '">', $rating.rating_count|wash, '</span>') ))})
+{/if}
+    {if $attribute.data_int} {'disabled'|i18n('extension/ezstarrating/datatype')}.{/if}
 <p id="ezsr_just_rated_{$attribute.id}" class="ezsr-just-rated hide">{'Thank you for rating!'|i18n('extension/ezstarrating/datatype', 'When rating')}</p>
 <p id="ezsr_has_rated_{$attribute.id}" class="ezsr-has-rated hide">{'You have already rated this page, you can only rate it once!'|i18n('extension/ezstarrating/datatype', 'When rating')}</p>
 <p id="ezsr_changed_rating_{$attribute.id}" class="ezsr-changed-rating hide">{'Your rating has been changed, thanks for rating!'|i18n('extension/ezstarrating/datatype', 'When rating')}</p>

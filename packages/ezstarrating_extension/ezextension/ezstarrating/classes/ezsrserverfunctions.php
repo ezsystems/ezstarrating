@@ -99,12 +99,23 @@ class ezsrServerFunctions extends ezjscServerFunctions
             $avgRateObj->store();
             eZContentCacheManager::clearContentCacheIfNeeded( $rateDataObj->attribute('contentobject_id') );
             $ret['rated'] = true;
-            $ret['stats'] = array(
-               'rating_count' => $avgRateObj->attribute('rating_count'),
-               'rating_average' => $avgRateObj->attribute('rating_average'),
-               'rounded_average' => $avgRateObj->attribute('rounded_average'),
-            );
+            
+            $user = eZUser::currentUser();
+            $canViewResults = $user->hasAccessTo( 'starrating', 'view_results' );
+            if( $canViewResults['accessWord'] === 'yes' )
+                $ret['stats'] = array(
+                   'rating_count' => $avgRateObj->attribute('rating_count'),
+                   'rating_average' => $avgRateObj->attribute('rating_average'),
+                   'rounded_average' => $avgRateObj->attribute('rounded_average'),
+                );
+            else
+                $ret['stats'] = array(
+                   'rating_count' => 1,
+                   'rating_average' => $args[2],
+                   'rounded_average' => $args[2],
+                );
         }
+        
         return $ret;
     }
 
