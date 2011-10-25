@@ -15,7 +15,7 @@
     </message>
     <message>
         <source>Rating: %current_rating/5</source>
-        <translation>Waardering: %current_rating/S</translation>
+        <translation type="unfinished">Waardering: %current_rating/5</translation>
     </message>
     <message>
         <source>%rating_count votes cast</source>
@@ -54,7 +54,8 @@
     </message>
     <message>
         <source>%login_link_startLog in%login_link_end or %create_link_startcreate a user account%create_link_end to rate this page.</source>
-        <translation>%login_link_startLog in%login_link_end of %create_link_startmaak een account aan%create_link_end om deze pagina te waarderen.</translation>
+        <translatorcomment>%login_link_startLog in%login_link_end of %create_link_startmaak een account aan%create_link_end om deze pagina te waarderen.</translatorcomment>
+        <translation></translation>
     </message>
     <message>
         <source>%login_link_startLog in%login_link_end to rate this page.</source>
