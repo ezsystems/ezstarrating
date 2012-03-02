@@ -84,6 +84,10 @@ span.ezsr_average_rating
 {
 	font-weight: bold;
 }
+.hreview-aggregate .fn 
+{
+    display:none;
+}
 
 /* this is usually declared in core.css, but we redeclare it here in case the user does not include that file */
 .hide
