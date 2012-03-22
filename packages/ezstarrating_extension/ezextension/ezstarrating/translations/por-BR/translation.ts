@@ -41,35 +41,35 @@
     </message>
     <message>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Desabilitado</translation>
     </message>
     <message>
         <source>disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>desabilitado</translation>
     </message>
     <message>
         <source>Your rating has been changed, thanks for rating!</source>
         <comment>When rating</comment>
-        <translation type="unfinished"></translation>
+        <translation>Sua avaliação foi modificada, obrigado por avaliar!</translation>
     </message>
     <message>
         <source>You don&apos;t have access to rate this page.</source>
-        <translation type="unfinished"></translation>
+        <translation>Você não possui acesso para avaliar esta página.</translation>
     </message>
     <message>
         <source>%login_link_startLog in%login_link_end or %create_link_startcreate a user account%create_link_end to rate this page.</source>
-        <translation type="unfinished"></translation>
+        <translation>%login_link_startLogar%login_link_end ou %create_link_startCriar uma conta de usuário%create_link_end para avaliar esta página.</translation>
     </message>
     <message>
         <source>%login_link_startLog in%login_link_end to rate this page.</source>
-        <translation type="unfinished"></translation>
+        <translation>%login_link_startLogar%login_link_end para avaliar esta página.</translation>
     </message>
 </context>
 <context>
     <name>kernel/content</name>
     <message>
         <source>Top Level Nodes</source>
-        <translation type="unfinished"></translation>
+        <translation>Nós do Topo</translation>
     </message>
 </context>
 </TS>
