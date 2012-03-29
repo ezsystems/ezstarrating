@@ -25,7 +25,7 @@
 
 class ezsrRatingType extends eZDataType
 {
-	const DATA_TYPE_STRING = 'ezsrrating';
+    const DATA_TYPE_STRING = 'ezsrrating';
 
     /*!
      Construction of the class, note that the second parameter in eZDataType 
