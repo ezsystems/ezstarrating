@@ -270,14 +270,16 @@ class ezsrRatingObject extends eZPersistentObject
         $classFilterArray = isset( $params['class_filter_array'] ) ? $params['class_filter_array'] : false;
         $includeNotRated  = isset( $params['include_not_rated'] )  ? $params['include_not_rated']  : false;
         $selectSql   = 'ezcontentobject.*, ezcontentobject_tree.*,';
-        $groupBySql  = 'GROUP BY ezcontentobject_tree.node_id';
+        $groupBySql  = '';
         $orderBySql  = 'ORDER BY rating DESC, rating_count DESC';// default sorting
+        $ratingFields = 'ezstarrating.rating_average as rating, ezstarrating.rating_count as rating_count,';
 
         // WARNING: group_by_owner only works as intended if user is owner of him self..
         if ( isset( $params['group_by_owner'] ) && $params['group_by_owner'] )
         {
             // group by owner instead of content object and fetch users instead of content objects
             $selectSql  = 'ezcontentobject.*, owner_tree.*,';
+            $ratingFields = 'AVG( ezstarrating.rating_average ) as rating, SUM( ezstarrating.rating_count ) as rating_count,';
             $groupBySql = 'GROUP BY owner_tree.node_id';
         }
 
@@ -433,8 +435,7 @@ class ezsrRatingObject extends eZPersistentObject
         $db  = eZDB::instance();
         $sql = "SELECT
                              $selectSql
-                             AVG( ezstarrating.rating_average ) as rating,
-                             SUM( ezstarrating.rating_count ) as rating_count,
+                             $ratingFields
                              ezcontentclass.serialized_name_list as class_serialized_name_list,
                              ezcontentclass.identifier as class_identifier,
                              ezcontentclass.is_container as is_container
