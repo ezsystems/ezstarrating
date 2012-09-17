@@ -303,7 +303,13 @@ class ezsrRatingObject extends eZPersistentObject
             $ownerId = $params['owner_id'];
             $whereSql[] = 'ezcontentobject.owner_id = ' . $ownerId;
         }
-
+        else if ( isset( $params['section_id'] ) and is_numeric($params['section_id']) )
+        {
+		      	// filter by section_id
+		      	$sectionId = $params['section_id'];
+		      	$whereSql[] = 'ezcontentobject.section_id = '. $sectionId;
+        }
+        
         if ( isset( $params['parent_node_id'] ) and is_numeric( $params['parent_node_id'] ) )
         {
             // filter by main parent node id
