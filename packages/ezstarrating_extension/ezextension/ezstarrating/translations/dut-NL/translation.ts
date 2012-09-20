@@ -4,7 +4,6 @@
 <context>
     <name>extension/ezstarrating/datatype</name>
     <message>
-        <location filename="ezsrratingtype.php" line="36"/>
         <source>Star Rating</source>
         <comment>Datatype name</comment>
         <translation>Sterwaardering</translation>
@@ -64,7 +63,6 @@
 <context>
     <name>kernel/content</name>
     <message>
-        <location filename="ezsrratingobjecttreenode.php" line="85"/>
         <source>Top Level Nodes</source>
         <translation>Locaties op het hoogste niveau</translation>
     </message>
