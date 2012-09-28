@@ -298,7 +298,7 @@ class ezsrRatingDataObject extends eZPersistentObject
         if ( !isset( $row['session_key'] ) )
         {
             $http = eZHTTPTool::instance();
-            $row['session_key'] = $http->getSessionKey();
+            $row['session_key'] = $http->sessionID();
         }
 
         if ( !isset( $row['user_id'] ) )
