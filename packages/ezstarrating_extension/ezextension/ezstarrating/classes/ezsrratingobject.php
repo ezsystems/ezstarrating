@@ -445,11 +445,11 @@ class ezsrRatingObject extends eZPersistentObject
                              ezcontentobject_tree,
                              ezcontentobject_tree owner_tree,
                              ezcontentclass
+                             ,ezcontentobject
                              $fromSql
                              $versionNameTables
                              $extendedAttributeFilter[tables]
                              $sqlPermissionChecking[from]
-                             ,ezcontentobject
                              $ratingFromSql
                             WHERE
                              $extendedAttributeFilter[joins]
@@ -480,7 +480,7 @@ class ezsrRatingObject extends eZPersistentObject
 
         unset($db);
 
-        if ( isset( $rows[0] ) && is_array( $rows ) )
+        if ( is_array( $rows ) && !empty( $rows ) )
         {
             if ( $asObject )
             {
