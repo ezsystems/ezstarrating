@@ -444,8 +444,8 @@ class ezsrRatingObject extends eZPersistentObject
                             FROM
                              ezcontentobject_tree,
                              ezcontentobject_tree owner_tree,
-                             ezcontentclass
-                             ,ezcontentobject
+                             ezcontentclass,
+                             ezcontentobject
                              $fromSql
                              $versionNameTables
                              $extendedAttributeFilter[tables]
