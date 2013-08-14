@@ -133,4 +133,3 @@ class ezsrRatingType extends eZDataType
     }
 }
 
-eZDataType::register( ezsrRatingType::DATA_TYPE_STRING, 'ezsrRatingType' );
