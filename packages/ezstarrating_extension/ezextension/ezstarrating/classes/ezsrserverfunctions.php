@@ -58,7 +58,10 @@ class ezsrServerFunctions extends ezjscServerFunctions
 
         // Provide extra session protection on 4.1 (not possible on 4.0) by expecting user
         // to have an existing session (new session = mostlikely a spammer / hacker trying to manipulate rating)
-        if ( class_exists( 'eZSession' ) && eZSession::userHasSessionCookie() !== true )
+        if (
+            eZSession::userHasSessionCookie() !== true
+            && eZINI::instance()->variable( 'eZStarRating', 'AllowAnonymousRating' ) === 'disabled'
+        )
             return $ret;
 
         // Return if parameters are not valid attribute id + version numbers
