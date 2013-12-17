@@ -131,15 +131,17 @@ class ezsrRatingDataObject extends eZPersistentObject
     {
         if ( $this->currentUserHasRated === null )
         {
+            $ini = eZINI::instance();
+            $useUserSession =  $ini->variable( 'eZStarRating', 'UseUserSession' ) === 'enabled';
+
             $http = eZHTTPTool::instance();
-            if ( $http->hasSessionVariable('ezsrRatedAttributeIdList') )
+            if ( $http->hasSessionVariable( 'ezsrRatedAttributeIdList', $useUserSession ) )
                 $attributeIdList = explode( ',', $http->sessionVariable('ezsrRatedAttributeIdList') );
             else
                 $attributeIdList = array();
 
-            $ini = eZINI::instance();
             $contentobjectAttributeId = $this->attribute('contentobject_attribute_id');
-            if ( in_array( $contentobjectAttributeId, $attributeIdList ) && $ini->variable( 'eZStarRating', 'UseUserSession' ) === 'enabled' )
+            if ( in_array( $contentobjectAttributeId, $attributeIdList ) && $useUserSession )
             {
                 $this->currentUserHasRated = true;
             }
@@ -186,7 +188,10 @@ class ezsrRatingDataObject extends eZPersistentObject
      */
     function store( $fieldFilters = null )
     {
-        if ( $this->attribute( 'user_id' ) == eZUser::currentUserID() )
+        if (
+            $this->attribute( 'user_id' ) == eZUser::currentUserID()
+            && eZINI::instance()->variable( 'eZStarRating', 'UseUserSession' ) === 'enabled'
+        )
         {
             // Store attribute id in session to avoid multiple ratings by same user even if he logs out (gets new session key)
             $http = eZHTTPTool::instance();
@@ -298,6 +303,16 @@ class ezsrRatingDataObject extends eZPersistentObject
         if ( !isset( $row['session_key'] ) )
         {
             $http = eZHTTPTool::instance();
+
+            if (
+                eZINI::instance()->variable( 'eZStarRating', 'UseUserSession' ) === 'enabled'
+                && !eZSession::hasStarted()
+            )
+            {
+                // Creates a session for anonymous
+                eZSession::start();
+            }
+
             $row['session_key'] = $http->sessionID();
         }
 
