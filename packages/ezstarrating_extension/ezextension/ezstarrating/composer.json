@@ -1,5 +1,5 @@
 {
-    "name": "ezsystems/ezstarrating-extension",
+    "name": "ezsystems/ezstarrating-ls",
     "description": "eZ Publish Legacy starrating extension",
     "type": "ezpublish-legacy-extension",
     "license": "GPL-2.0",
