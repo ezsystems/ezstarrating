@@ -43,7 +43,7 @@ class ezsrRatingObjectTreeNode extends eZContentObjectTreeNode
      */
     public function __construct( $row )
     {
-        $this->eZContentObjectTreeNode( $row );
+        $this->eZPersistentObject( $row );
     }
 
     /** definition of ezsrRatingObjectTreeNode, extends eZContentObjectTreeNode definition
