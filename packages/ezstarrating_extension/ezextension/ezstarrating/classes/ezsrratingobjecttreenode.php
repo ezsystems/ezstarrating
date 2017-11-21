@@ -35,11 +35,13 @@
 class ezsrRatingObjectTreeNode extends eZContentObjectTreeNode
 {
      /**
-     * Construct
+     * Construct, shouldn't be called directly
+     * Use {@link ezsrRatingObjectTreeNode::makeObjectsArray()} to create new objects.
      * 
+     * @access protected
      * @param array $row
      */
-    protected function __construct( $row )
+    public function __construct( $row )
     {
         $this->eZContentObjectTreeNode( $row );
     }

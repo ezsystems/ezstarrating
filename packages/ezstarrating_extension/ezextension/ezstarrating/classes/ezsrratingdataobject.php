@@ -33,11 +33,13 @@ class ezsrRatingDataObject extends eZPersistentObject
     protected $currentUserHasRated = null;
 
      /**
-     * Construct, use {@link ezsrRatingDataObject::create()} to create new objects.
+     * Construct, shouldn't be called directly
+     * Use {@link ezsrRatingDataObject::create()} to create new objects.
      *
+     * @access protected
      * @param array $row
      */
-    protected function __construct( $row )
+    public function __construct( $row )
     {
         $this->eZPersistentObject( $row );
     }
