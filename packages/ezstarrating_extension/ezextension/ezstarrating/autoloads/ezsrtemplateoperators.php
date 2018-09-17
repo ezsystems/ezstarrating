@@ -25,10 +25,6 @@
 
 class ezsrTemplateOperators
 {
-    function ezsrTemplateOperators()
-    {
-    }
-
     function operatorList()
     {
         return array( 'fetch_starrating_data',

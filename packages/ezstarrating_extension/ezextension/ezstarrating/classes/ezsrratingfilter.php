@@ -30,10 +30,6 @@
 
 class ezsrRatingFilter
 {
-    function ezsrRatingFilter()
-    {
-    }
-
     function createSqlParts( $params )
     {
         /*
