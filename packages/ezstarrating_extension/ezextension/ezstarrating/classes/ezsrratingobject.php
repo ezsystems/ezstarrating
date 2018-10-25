@@ -86,8 +86,8 @@ class ezsrRatingObject extends eZPersistentObject
      */
     function getRoundedAverage()
     {
-        $avg = $this->attribute('rating_average');
-        $rnd_avg = intval($avg * 2 + 0.5) / 2;
+        $avg = $this->attribute( 'rating_average' );
+        $rnd_avg = intval( $avg * 2 + 0.5 ) / 2;
         return $rnd_avg;
     }
 
@@ -108,7 +108,7 @@ class ezsrRatingObject extends eZPersistentObject
      */
     function getRatingData()
     {
-        return ezsrRatingDataObject::fetchByObjectId( $this->attribute('contentobject_id'), $this->attribute('contentobject_attribute_id') );
+        return ezsrRatingDataObject::fetchByObjectId( $this->attribute( 'contentobject_id' ), $this->attribute( 'contentobject_attribute_id' ) );
     }
 
     /**
@@ -118,8 +118,8 @@ class ezsrRatingObject extends eZPersistentObject
      */
     function currentUserHasRated()
     {
-        $rateDataObj = ezsrRatingDataObject::create( array( 'contentobject_id' => $this->attribute('contentobject_id'),
-                                                            'contentobject_attribute_id' =>  $this->attribute('contentobject_attribute_id'),
+        $rateDataObj = ezsrRatingDataObject::create( array( 'contentobject_id' => $this->attribute( 'contentobject_id' ),
+                                                            'contentobject_attribute_id' =>  $this->attribute( 'contentobject_attribute_id' ),
                                                             'created_at' => 0 ) );
         return $rateDataObj->userHasRated();
     }
@@ -196,8 +196,8 @@ class ezsrRatingObject extends eZPersistentObject
                                 'name'      => 'rating_count' ) ,
                          array( 'operation' => 'avg( rating )',
                                 'name'      => 'rating_average' ));
-        $cond = array( 'contentobject_id' => $this->attribute('contentobject_id'),
-                       'contentobject_attribute_id' => $this->attribute('contentobject_attribute_id') );
+        $cond = array( 'contentobject_id' => $this->attribute( 'contentobject_id' ),
+                       'contentobject_attribute_id' => $this->attribute( 'contentobject_attribute_id' ) );
         $data = self::fetchObjectList( ezsrRatingDataObject::definition(), array(), $cond, null, null, false, false, $custom );
         if ( isset( $data[0]['rating_average'] ) )
         {
@@ -285,13 +285,13 @@ class ezsrRatingObject extends eZPersistentObject
             $groupBySql = 'GROUP BY owner_tree.node_id';
         }
 
-        if ( isset( $params['owner_parent_node_id'] ) and is_numeric( $params['owner_parent_node_id'] ) )
+        if ( isset( $params['owner_parent_node_id'] ) && is_numeric( $params['owner_parent_node_id'] ) )
         {
             // filter by parent node of owner (main user group)
             $parentNodeId = $params['owner_parent_node_id'];
             $whereSql[] = 'owner_tree.parent_node_id = ' . $parentNodeId;
         }
-        else if ( isset( $params['owner_parent_node_path'] ) and is_string( $params['owner_parent_node_path'] ) )
+        elseif ( isset( $params['owner_parent_node_path'] ) && is_string( $params['owner_parent_node_path'] ) )
         {
             // filter recursivly by parent node id
             // supported format is /1/2/144/256/ ( $node.path_string )
@@ -299,20 +299,26 @@ class ezsrRatingObject extends eZPersistentObject
             $whereSql[] = "owner_tree.path_string != '$parentNodePath'";
             $whereSql[] = "owner_tree.path_string like '$parentNodePath%'";
         }
-        else if ( isset( $params['owner_id'] ) and is_numeric($params['owner_id']) )
+        elseif ( isset( $params['owner_id'] ) && is_numeric( $params['owner_id'] ) )
         {
             // filter by owner_id ( user / contentobject id)
             $ownerId = $params['owner_id'];
             $whereSql[] = 'ezcontentobject.owner_id = ' . $ownerId;
         }
-
-        if ( isset( $params['parent_node_id'] ) and is_numeric( $params['parent_node_id'] ) )
+        elseif ( isset( $params['section_id'] ) && is_numeric( $params['section_id'] ) )
+        {
+		      	// filter by section_id
+		      	$sectionId = $params['section_id'];
+		      	$whereSql[] = 'ezcontentobject.section_id = '. $sectionId;
+        }
+        
+        if ( isset( $params['parent_node_id'] ) && is_numeric( $params['parent_node_id'] ) )
         {
             // filter by main parent node id
             $parentNodeId = $params['parent_node_id'];
             $whereSql[] = 'ezcontentobject_tree.parent_node_id = ' . $parentNodeId;
         }
-        else if ( isset( $params['parent_node_path'] ) )
+        elseif ( isset( $params['parent_node_path'] ) )
         {
             if ( is_string( $params['parent_node_path'] ) )
             {
@@ -335,12 +341,12 @@ class ezsrRatingObject extends eZPersistentObject
             return null;
         }
 
-        if ( isset( $params['limit'] ))
+        if ( isset( $params['limit'] ) )
         {
             $limit = (int) $params['limit'];
         }
 
-        if ( isset( $params['offset'] ))
+        if ( isset( $params['offset'] ) )
         {
             $offset = (int) $params['offset'];
         }
@@ -369,24 +375,24 @@ class ezsrRatingObject extends eZPersistentObject
                 {
                     case 'rating':
                     {
-                        $orderBySqlPart = 'rating ' . ( $direction ? 'ASC' : 'DESC');
+                        $orderBySqlPart = 'rating ' . ( $direction ? 'ASC' : 'DESC' );
                     }break;
                     case 'rating_count':
                     {
-                        $orderBySqlPart = 'rating_count ' . ( $direction ? 'ASC' : 'DESC');
+                        $orderBySqlPart = 'rating_count ' . ( $direction ? 'ASC' : 'DESC' );
                     }break;
                     case 'object_count':
                     {
                         $selectSql  .= 'COUNT( ezcontentobject.id ) as object_count,';
-                        $orderBySqlPart = 'object_count ' . ( $direction ? 'ASC' : 'DESC');
+                        $orderBySqlPart = 'object_count ' . ( $direction ? 'ASC' : 'DESC' );
                     }break;
                     case 'published':
                     {
-                        $orderBySqlPart = 'ezcontentobject.published ' . ( $direction ? 'ASC' : 'DESC');
+                        $orderBySqlPart = 'ezcontentobject.published ' . ( $direction ? 'ASC' : 'DESC' );
                     }break;
                     case 'modified':
                     {
-                        $orderBySqlPart = 'ezcontentobject.modified ' . ( $direction ? 'ASC' : 'DESC');
+                        $orderBySqlPart = 'ezcontentobject.modified ' . ( $direction ? 'ASC' : 'DESC' );
                     }break;
                     case 'view_count':
                     {
@@ -394,13 +400,13 @@ class ezsrRatingObject extends eZPersistentObject
                         $selectSql  .= 'ezview_counter.count as view_count,';
                         $fromSql    .= ', ezview_counter';
                         $whereSql[]  = 'ezcontentobject_tree.node_id = ezview_counter.node_id';
-                        $orderBySqlPart = 'view_count ' . ( $direction ? 'ASC' : 'DESC');
+                        $orderBySqlPart = 'view_count ' . ( $direction ? 'ASC' : 'DESC' );
                     }break;
                     default:
                     {
                         if ( isset( $params['extended_attribute_filter'] ) )// allow custom sort types
                         {
-                            $orderBySqlPart = $order[0] . ' ' . ( $direction ? 'ASC' : 'DESC');
+                            $orderBySqlPart = $order[0] . ' ' . ( $direction ? 'ASC' : 'DESC' );
                         }
                         else
                         {
@@ -416,7 +422,7 @@ class ezsrRatingObject extends eZPersistentObject
             }
         }
 
-        $whereSql = $whereSql ? implode( $whereSql, ' AND ') . ' AND ': '';
+        $whereSql = $whereSql ? implode( $whereSql, ' AND ' ) . ' AND ': '';
 
         $extendedAttributeFilter = eZContentObjectTreeNode::createExtendedAttributeFilterSQLStrings( $params['extended_attribute_filter'] );
 
@@ -495,7 +501,7 @@ class ezsrRatingObject extends eZPersistentObject
                 $ret = $rows;
             }
         }
-        else if ( $rows === false )
+        elseif ( $rows === false )
         {
             eZDebug::writeError( 'The ezstarrating table seems to be missing,
                           contact your administrator', __METHOD__ );
